@@ -18,6 +18,7 @@ jobs:
         with:
           php-version: "8.2"
           tools: composer
+          extensions: sqlite3, pdo_sqlite
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
