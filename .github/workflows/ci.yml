@@ -18,6 +18,7 @@ jobs:
         with:
           php-version: "8.2"
           tools: composer
+          extensions: sqlite3, pdo_sqlite
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -25,9 +26,20 @@ jobs:
       - name: Prepare env
         run: |
           cp .env.example .env
+          echo "APP_ENV=testing" >> .env
+          echo "APP_DEBUG=false" >> .env
+          echo "CACHE_STORE=array" >> .env
+          echo "SESSION_DRIVER=array" >> .env
+          echo "QUEUE_CONNECTION=sync" >> .env
+          echo "CACHE_PATH=$(pwd)/storage/framework/cache/data" >> .env
+
           php artisan key:generate
+
           mkdir -p database
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views bootstrap/cache
+
           test -f database/database.sqlite || touch database/database.sqlite
+
 
       - name: Migrate
         run: php artisan migrate --force
