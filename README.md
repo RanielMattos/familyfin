@@ -1,14 +1,21 @@
 # FamilyFin
 
-Sistema web (futuro app) de organização financeira familiar: orçamento por competência (cenários) + planejamento de pagamentos (PlanPag).
+Sistema web (futuro app) para organização financeira familiar: **Orçamento por competência (cenários)** + **Planejamento de Pagamentos (PlanPag)**, com multi-tenant por família e base pronta para evoluir em dashboard e importação de planilhas.
+
+## O que já existe (Fase 0)
+- Multi-tenant por família (Family / FamilyMember)
+- Taxonomia base (grupos/categorias) com seed + endpoint JSON
+- Orçamento por competência (Scenario / BudgetLine / BudgetEntry)
+- PlanPag (Bill / BillOccurrence) + listagem por período
+- Testes automatizados cobrindo o núcleo
 
 ## Requisitos
 - PHP 8.2+
 - Composer
+- SQLite (arquivo)
 - Git
-- (Opcional) Node/Vite para UI depois
 
-## Setup (primeira execução)
+## Setup rápido (primeira execução)
 ```bash
 cp .env.example .env
 php artisan key:generate
