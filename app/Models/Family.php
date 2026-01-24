@@ -30,4 +30,9 @@ class Family extends Model
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
+    public function scenarios(): HasMany
+    {
+    return $this->hasMany(Scenario::class)->orderBy('start_date');
+    }
+
 }
