@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 
 class User extends Authenticatable
 {
@@ -45,4 +48,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function familyMemberships(): HasMany
+{
+    return $this->hasMany(FamilyMember::class);
+}
+
+public function families(): BelongsToMany
+{
+    return $this->belongsToMany(Family::class, 'family_members')
+        ->withPivot(['role', 'is_active', 'joined_at'])
+        ->withTimestamps();
+}
+
 }
