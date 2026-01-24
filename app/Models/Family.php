@@ -34,5 +34,10 @@ class Family extends Model
     {
     return $this->hasMany(Scenario::class)->orderBy('start_date');
     }
+    public function bills(): HasMany
+    {
+    return $this->hasMany(Bill::class)->orderBy('sort_order')->orderBy('name');
+    }
+
 
 }
