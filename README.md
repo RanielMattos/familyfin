@@ -1,4 +1,5 @@
 # FamilyFin
+![CI](https://github.com/RanielMattos/familyfin/actions/workflows/ci.yml/badge.svg)
 
 Sistema web (futuro app) para organização financeira familiar: **Orçamento por competência (cenários)** + **Planejamento de Pagamentos (PlanPag)**, com multi-tenant por família e base pronta para evoluir em dashboard e importação de planilhas.
 
