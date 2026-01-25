@@ -48,4 +48,17 @@ class FamilyMember extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected function casts(): array
+{
+    return [
+        'role' => 'string',
+    ];
+}
+
+public function setRoleAttribute($value): void
+{
+    $this->attributes['role'] = is_string($value) ? strtolower($value) : $value;
+}
+
 }
