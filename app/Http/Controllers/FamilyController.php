@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Family;
-use App\Models\FamilyMember;
+use App\Services\FamilyActivationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class FamilyController extends Controller
 {
+    public function __construct(
+        private readonly FamilyActivationService $activation
+    ) {}
+
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -17,20 +21,18 @@ class FamilyController extends Controller
 
         $user = $request->user();
 
-        // desativa todas
-        FamilyMember::where('user_id', $user->id)->update(['is_active' => 0]);
-
-        // cria família
         $family = Family::create([
             'name' => $data['name'],
         ]);
 
-        // vincula como owner e ativa
+        // cria o vínculo como owner (começa inativa; o service garante "1 ativa por vez")
         $user->families()->attach($family->id, [
-            'role' => 'owner',
-            'is_active' => 1,
+            'role'      => 'owner',
+            'is_active' => 0,
             'joined_at' => now(),
         ]);
+
+        $this->activation->activateForUser($user, $family);
 
         return redirect()->route('family.dashboard', ['family' => $family->id]);
     }
@@ -39,13 +41,7 @@ class FamilyController extends Controller
     {
         $user = $request->user();
 
-        // desativa todas
-        FamilyMember::where('user_id', $user->id)->update(['is_active' => 0]);
-
-        // ativa a selecionada (middleware já garante acesso)
-        FamilyMember::where('user_id', $user->id)
-            ->where('family_id', $family->id)
-            ->update(['is_active' => 1]);
+        $this->activation->activateForUser($user, $family);
 
         return redirect()->route('family.dashboard', ['family' => $family->id]);
     }
