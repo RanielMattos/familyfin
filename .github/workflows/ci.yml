@@ -20,8 +20,20 @@ jobs:
           tools: composer
           extensions: sqlite3, pdo_sqlite
 
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install backend dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build assets (Vite)
+        run: npm run build
 
       - name: Prepare env
         run: |
@@ -31,15 +43,12 @@ jobs:
           echo "CACHE_STORE=array" >> .env
           echo "SESSION_DRIVER=array" >> .env
           echo "QUEUE_CONNECTION=sync" >> .env
-          echo "CACHE_PATH=$(pwd)/storage/framework/cache/data" >> .env
 
           php artisan key:generate
 
           mkdir -p database
           mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views bootstrap/cache
-
           test -f database/database.sqlite || touch database/database.sqlite
-
 
       - name: Migrate
         run: php artisan migrate --force
