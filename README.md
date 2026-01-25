@@ -24,5 +24,3 @@ php -r "file_exists('database/database.sqlite') || touch('database/database.sqli
 php artisan migrate
 php artisan test
 php artisan serve
-
-# test protection
