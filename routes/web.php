@@ -10,6 +10,7 @@ use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\PlanpagController;
 
 use App\Http\Middleware\EnsureFamilyAccess;
+use App\Http\Middleware\AutoActivateFamily;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,41 +41,45 @@ Route::get('/dashboard', DashboardController::class)
 
 Route::middleware('auth')->group(function () {
     /*
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | Profile
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /*
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | Family management (global, not /f/{family})
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     */
     Route::post('/families', [FamilyController::class, 'store'])->name('families.store');
 
+    // ATENÇÃO: aqui usamos apenas EnsureFamilyAccess (membro pode ativar mesmo se estiver inativa)
     Route::post('/families/{family}/activate', [FamilyController::class, 'activate'])
         ->middleware(EnsureFamilyAccess::class)
         ->name('families.activate');
 
     /*
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | Family tenancy core (tests depend on this)
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     */
     Route::get('/f/{family}/ping', function () {
         return response()->json(['ok' => true]);
     })->middleware(EnsureFamilyAccess::class);
 
     /*
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | Family-scoped routes (product UI)
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
+    | Aqui SIM entra o AutoActivateFamily.
+    | Ordem importa: primeiro garante acesso (e injeta currentFamily),
+    | depois auto-ativa usando o service.
     */
     Route::prefix('/f/{family}')
-        ->middleware(EnsureFamilyAccess::class)
+        ->middleware([EnsureFamilyAccess::class, AutoActivateFamily::class])
         ->group(function () {
             Route::get('/dashboard', [FamilyDashboardController::class, 'index'])
                 ->name('family.dashboard');
@@ -88,8 +93,8 @@ Route::middleware('auth')->group(function () {
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Breeze auth routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 require __DIR__ . '/auth.php';
