@@ -11,39 +11,39 @@ class EnsureFamilyAccess
 {
     /**
      * Exige que:
-     * - exista um parâmetro de rota {family} (ULID)
-     * - o usuário autenticado seja membro dessa família
-     * - injeta o model Family resolvido em $request->attributes para uso posterior
+     * - exista um parâmetro de rota {family}
+     * - o usuário autenticado seja membro dessa família (independente de is_active)
+     * - injeta o model Family resolvido em $request->attributes
      */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             abort(401);
         }
 
-        $familyId = $request->route('family');
-        if (!$familyId) {
+        $familyParam = $request->route('family');
+        if (! $familyParam) {
             abort(400, 'Missing family route parameter.');
         }
 
-        $isMember = $user->familyMemberships()
-            ->where('family_id', $familyId)
-            ->where('is_active', true)
-            ->exists();
+        // Suporta tanto ID quanto Route Model Binding (Family $family)
+        $family = $familyParam instanceof Family
+            ? $familyParam
+            : Family::query()->find($familyParam);
 
-        if (!$isMember) {
-            abort(403);
-        }
-
-        /** @var Family|null $family */
-        $family = Family::query()->find($familyId);
-
-        if (!$family) {
+        if (! $family) {
             abort(404);
         }
 
-        // Deixa a família acessível em qualquer camada sem “buscar de novo”
+        $isMember = $user->familyMemberships()
+            ->where('family_id', $family->id)
+            ->exists();
+
+        if (! $isMember) {
+            abort(403);
+        }
+
         $request->attributes->set('currentFamily', $family);
 
         return $next($request);
