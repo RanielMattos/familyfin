@@ -36,20 +36,10 @@ class FamilyBillsController extends Controller
     {
         $validated = $request->validated();
 
-        $baseSlug = Str::slug($validated['name']);
-        $slug = $baseSlug;
-
-        // garante slug único por família
-        $i = 1;
-        while (
-            Bill::query()
-                ->where('family_id', $family->id)
-                ->where('slug', $slug)
-                ->exists()
-        ) {
-            $i++;
-            $slug = "{$baseSlug}-{$i}";
-        }
+        $slug = $this->uniqueSlugForFamily(
+            familyId: $family->id,
+            name: $validated['name'],
+        );
 
         $bill = new Bill();
         $bill->family_id = $family->id;
@@ -62,5 +52,76 @@ class FamilyBillsController extends Controller
         return redirect()
             ->route('family.bills.index', $family)
             ->with('success', 'Conta criada com sucesso.');
+    }
+
+    public function edit(Family $family, Bill $bill): View
+    {
+        $this->ensureBillBelongsToFamily($family, $bill);
+
+        return view('family.bills.edit', [
+            'family' => $family,
+            'bill' => $bill,
+        ]);
+    }
+
+    public function update(StoreBillRequest $request, Family $family, Bill $bill): RedirectResponse
+    {
+        $this->ensureBillBelongsToFamily($family, $bill);
+
+        $validated = $request->validated();
+
+        $slug = $this->uniqueSlugForFamily(
+            familyId: $family->id,
+            name: $validated['name'],
+            ignoreBillId: $bill->id,
+        );
+
+        $bill->direction = $validated['direction'];
+        $bill->name = $validated['name'];
+        $bill->slug = $slug;
+        $bill->save();
+
+        return redirect()
+            ->route('family.bills.index', $family)
+            ->with('success', 'Conta atualizada com sucesso.');
+    }
+
+    public function destroy(Family $family, Bill $bill): RedirectResponse
+    {
+        $this->ensureBillBelongsToFamily($family, $bill);
+
+        $bill->delete();
+
+        return redirect()
+            ->route('family.bills.index', $family)
+            ->with('success', 'Conta removida com sucesso.');
+    }
+
+    private function ensureBillBelongsToFamily(Family $family, Bill $bill): void
+    {
+        if ((string) $bill->family_id !== (string) $family->id) {
+            abort(404);
+        }
+    }
+
+    private function uniqueSlugForFamily(string $familyId, string $name, ?string $ignoreBillId = null): string
+    {
+        $baseSlug = Str::slug($name);
+        $slug = $baseSlug;
+
+        $i = 1;
+
+        while (
+            Bill::query()
+                ->where('family_id', $familyId)
+                ->when($ignoreBillId, fn ($q) => $q->where('id', '!=', $ignoreBillId))
+                ->where('slug', $slug)
+                ->exists()
+        ) {
+            $i++;
+            $slug = "{$baseSlug}-{$i}";
+        }
+
+        return $slug;
     }
 }
