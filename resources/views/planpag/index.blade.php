@@ -1,8 +1,15 @@
 <x-app-layout>
+    @php
+        /** @var \App\Models\Family|null $family */
+        $familyName = $family?->name ?? '';
+        $fromValue  = old('from', $from ?? '');
+        $toValue    = old('to', $to ?? '');
+    @endphp
+
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('PlanPag') }} · {{ $family->name }}
+                {{ __('PlanPag') }} · {{ $familyName }}
             </h2>
         </div>
     </x-slot>
@@ -20,7 +27,7 @@
                                 name="from"
                                 type="date"
                                 class="mt-1 block w-full"
-                                value="{{ $from }}"
+                                value="{{ $fromValue }}"
                                 required
                             />
                         </div>
@@ -32,7 +39,7 @@
                                 name="to"
                                 type="date"
                                 class="mt-1 block w-full"
-                                value="{{ $to }}"
+                                value="{{ $toValue }}"
                                 required
                             />
                         </div>
@@ -52,30 +59,53 @@
                         <table class="min-w-full text-sm">
                             <thead class="text-left text-gray-600">
                                 <tr>
-                                    <th class="py-2 pr-4">Vencimento</th>
-                                    <th class="py-2 pr-4">Conta</th>
-                                    <th class="py-2 pr-4">Status</th>
-                                    <th class="py-2 pr-4">Previsto</th>
-                                    <th class="py-2 pr-4">Pago</th>
+                                    <th class="py-2 pr-6 whitespace-nowrap">Vencimento</th>
+                                    <th class="py-2 pr-6">Conta</th>
+                                    <th class="py-2 pr-6">Status</th>
+                                    <th class="py-2 pr-6 text-right">Previsto</th>
+                                    <th class="py-2 pr-6 text-right">Pago</th>
                                 </tr>
                             </thead>
 
                             <tbody class="divide-y">
-                                @forelse ($items as $o)
+                                @forelse(($items ?? collect()) as $o)
+                                    @php
+                                        $status = strtoupper((string) ($o->status ?? 'OPEN'));
+                                        $isPaid = $status === 'PAID';
+
+                                        $planned = (int) ($o->planned_amount_cents ?? 0);
+                                        $paid    = (int) ($o->paid_amount_cents ?? 0);
+                                    @endphp
+
                                     <tr>
-                                        <td class="py-3 pr-4 text-gray-700">{{ $o->due_date?->toDateString() }}</td>
-                                        <td class="py-3 pr-4 font-medium">{{ $o->bill->name }}</td>
-                                        <td class="py-3 pr-4 text-gray-700">{{ $o->status }}</td>
-                                        <td class="py-3 pr-4 text-gray-700">
-                                            R$ {{ number_format(($o->planned_amount_cents ?? 0) / 100, 2, ',', '.') }}
+                                        <td class="py-3 pr-6 text-gray-700 whitespace-nowrap">
+                                            {{ $o->due_date?->toDateString() ?? '-' }}
                                         </td>
-                                        <td class="py-3 pr-4 text-gray-700">
-                                            R$ {{ number_format(($o->paid_amount_cents ?? 0) / 100, 2, ',', '.') }}
+
+                                        <td class="py-3 pr-6 font-medium text-gray-900">
+                                            {{ $o->bill?->name ?? '-' }}
+                                        </td>
+
+                                        <td class="py-3 pr-6">
+                                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold
+                                                {{ $isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                                {{ $status }}
+                                            </span>
+                                        </td>
+
+                                        <td class="py-3 pr-6 text-right tabular-nums text-gray-700">
+                                            R$ {{ number_format($planned / 100, 2, ',', '.') }}
+                                        </td>
+
+                                        <td class="py-3 pr-6 text-right tabular-nums text-gray-700">
+                                            R$ {{ number_format($paid / 100, 2, ',', '.') }}
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td class="py-3 text-gray-500" colspan="5">Nenhuma ocorrência no período.</td>
+                                        <td class="py-3 text-gray-500" colspan="5">
+                                            Nenhuma ocorrência no período.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
