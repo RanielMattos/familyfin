@@ -95,24 +95,26 @@ Route::middleware('auth')->group(function () {
                 ->name('family.taxonomy');
 
             // Bills routes
+            Route::get('/bills', [FamilyBillsController::class, 'index'])
+                ->name('family.bills.index');
+
             Route::get('/bills/create', [FamilyBillsController::class, 'create'])
                 ->name('family.bills.create');
 
             Route::post('/bills', [FamilyBillsController::class, 'store'])
                 ->name('family.bills.store');
 
-            Route::get('/bills', [FamilyBillsController::class, 'index'])
-                ->name('family.bills.index');
-
-            Route::get('bills/{bill}/edit', [FamilyBillsController::class, 'edit'])
+            Route::get('/bills/{bill}/edit', [FamilyBillsController::class, 'edit'])
                 ->name('family.bills.edit');
 
-            Route::put('bills/{bill}', [FamilyBillsController::class, 'update'])
+            Route::put('/bills/{bill}', [FamilyBillsController::class, 'update'])
                 ->name('family.bills.update');
 
-            Route::delete('bills/{bill}', [FamilyBillsController::class, 'destroy'])
+            Route::delete('/bills/{bill}', [FamilyBillsController::class, 'destroy'])
                 ->name('family.bills.destroy');
 
+            Route::post('/bills/{bill}/toggle-active', [FamilyBillsController::class, 'toggleActive'])
+                ->name('family.bills.toggleActive');
         });
 });
 
