@@ -6,9 +6,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FamilyController;
 use App\Http\Controllers\FamilyDashboardController;
+use App\Http\Controllers\FamilyPlanpagPageController;
 use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\PlanpagController;
-use App\Http\Controllers\FamilyPlanpagPageController;
+
 use App\Http\Middleware\EnsureFamilyAccess;
 use App\Http\Middleware\AutoActivateFamily;
 
@@ -28,7 +29,7 @@ Route::get('/', function () {
 | Must NOT be inside auth middleware.
 */
 Route::get('/taxonomia', [TaxonomyController::class, 'index']);
-Route::get('/planpag', FamilyPlanpagPageController::class)->name('family.planpag');
+Route::get('/planpag', [PlanpagController::class, 'index']);
 
 /*
 |--------------------------------------------------------------------------
@@ -41,42 +42,42 @@ Route::get('/dashboard', DashboardController::class)
 
 Route::middleware('auth')->group(function () {
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Profile
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Family management (global, not /f/{family})
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
     Route::post('/families', [FamilyController::class, 'store'])->name('families.store');
 
-    // ATENÇÃO: aqui usamos apenas EnsureFamilyAccess (membro pode ativar mesmo se estiver inativa)
+    // Ativa manualmente uma família (middleware garante que o usuário é membro)
     Route::post('/families/{family}/activate', [FamilyController::class, 'activate'])
         ->middleware(EnsureFamilyAccess::class)
         ->name('families.activate');
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Family tenancy core (tests depend on this)
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
     Route::get('/f/{family}/ping', function () {
         return response()->json(['ok' => true]);
     })->middleware(EnsureFamilyAccess::class);
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Family-scoped routes (product UI)
-    |----------------------------------------------------------------------
-    | Aqui SIM entra o AutoActivateFamily.
-    | Ordem importa: primeiro garante acesso (e injeta currentFamily),
-    | depois auto-ativa usando o service.
+    |--------------------------------------------------------------------------
+    | Ordem importa:
+    | 1) EnsureFamilyAccess: garante que o usuário é membro e resolve o {family}
+    | 2) AutoActivateFamily: marca esta family como ativa para o usuário
     */
     Route::prefix('/f/{family}')
         ->middleware([EnsureFamilyAccess::class, AutoActivateFamily::class])
@@ -84,17 +85,19 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', [FamilyDashboardController::class, 'index'])
                 ->name('family.dashboard');
 
-            Route::get('/planpag', [PlanpagController::class, 'index'])
+            // UI (HTML)
+            Route::get('/planpag', FamilyPlanpagPageController::class)
                 ->name('family.planpag');
 
+            // Já existente (JSON)
             Route::get('/taxonomia', [TaxonomyController::class, 'index'])
                 ->name('family.taxonomy');
         });
 });
 
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Breeze auth routes
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 require __DIR__ . '/auth.php';

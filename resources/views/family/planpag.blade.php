@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                PlanPag · {{ $family->name }}
+                PlanPag ·
             </h2>
         </div>
     </x-slot>
@@ -15,12 +15,26 @@
                     <form method="GET" class="flex flex-col md:flex-row gap-3 items-end">
                         <div class="w-full md:w-56">
                             <x-input-label for="from" value="De" />
-                            <x-text-input id="from" name="from" type="date" class="mt-1 block w-full" value="{{ $from }}" required />
+                            <x-text-input
+                                id="from"
+                                name="from"
+                                type="date"
+                                class="mt-1 block w-full"
+                                value="{{ old('from', $from) }}"
+                                required
+                            />
                         </div>
 
                         <div class="w-full md:w-56">
                             <x-input-label for="to" value="Até" />
-                            <x-text-input id="to" name="to" type="date" class="mt-1 block w-full" value="{{ $to }}" required />
+                            <x-text-input
+                                id="to"
+                                name="to"
+                                type="date"
+                                class="mt-1 block w-full"
+                                value="{{ old('to', $to) }}"
+                                required
+                            />
                         </div>
 
                         <div>
@@ -43,16 +57,15 @@
                                     <th class="py-2 pr-4">Pago</th>
                                 </tr>
                             </thead>
+
                             <tbody class="divide-y">
-                                @forelse ($occurrences as $occ)
+                                @forelse($occurrences as $o)
                                     <tr>
-                                        <td class="py-2 pr-4">
-                                            {{ \Illuminate\Support\Carbon::parse($occ->due_date)->toDateString() }}
-                                        </td>
-                                        <td class="py-2 pr-4">{{ $occ->bill?->name }}</td>
-                                        <td class="py-2 pr-4">{{ $occ->status }}</td>
-                                        <td class="py-2 pr-4">{{ $occ->planned_amount_cents }}</td>
-                                        <td class="py-2 pr-4">{{ $occ->paid_amount_cents }}</td>
+                                        <td class="py-3 pr-4">{{ $o->due_date?->toDateString() }}</td>
+                                        <td class="py-3 pr-4">{{ $o->bill->name }}</td>
+                                        <td class="py-3 pr-4">{{ $o->status }}</td>
+                                        <td class="py-3 pr-4">{{ number_format($o->planned_amount_cents / 100, 2, ',', '.') }}</td>
+                                        <td class="py-3 pr-4">{{ number_format($o->paid_amount_cents / 100, 2, ',', '.') }}</td>
                                     </tr>
                                 @empty
                                     <tr>
