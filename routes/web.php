@@ -8,7 +8,7 @@ use App\Http\Controllers\FamilyController;
 use App\Http\Controllers\FamilyDashboardController;
 use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\PlanpagController;
-
+use App\Http\Controllers\FamilyPlanpagPageController;
 use App\Http\Middleware\EnsureFamilyAccess;
 use App\Http\Middleware\AutoActivateFamily;
 
@@ -28,7 +28,7 @@ Route::get('/', function () {
 | Must NOT be inside auth middleware.
 */
 Route::get('/taxonomia', [TaxonomyController::class, 'index']);
-Route::get('/planpag', [PlanpagController::class, 'index']);
+Route::get('/planpag', FamilyPlanpagPageController::class)->name('family.planpag');
 
 /*
 |--------------------------------------------------------------------------
