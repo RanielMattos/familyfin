@@ -18,7 +18,7 @@ class FamilyBillsController extends Controller
             ->withCount('occurrences')
             ->orderBy('direction')
             ->orderBy('name')
-            ->get(['id', 'name', 'direction', 'slug', 'created_at', 'family_id']);
+            ->get(['id', 'name', 'direction', 'slug', 'created_at', 'family_id', 'is_active']);
 
         return view('family.bills.index', [
             'family' => $family,
@@ -103,6 +103,22 @@ class FamilyBillsController extends Controller
         return redirect()
             ->route('family.bills.index', $family)
             ->with('success', 'Conta removida com sucesso.');
+    }
+
+    public function toggleActive(Family $family, Bill $bill): RedirectResponse
+    {
+        $this->ensureBillBelongsToFamily($family, $bill);
+
+        $bill->is_active = ! (bool) $bill->is_active;
+        $bill->save();
+
+        $message = $bill->is_active
+            ? 'Conta ativada com sucesso.'
+            : 'Conta inativada com sucesso.';
+
+        return redirect()
+            ->route('family.bills.index', $family)
+            ->with('success', $message);
     }
 
     private function ensureBillBelongsToFamily(Family $family, Bill $bill): void

@@ -34,6 +34,7 @@
                             <tr>
                                 <th class="py-2 pr-4">Nome</th>
                                 <th class="py-2 pr-4">Tipo</th>
+                                <th class="py-2 pr-4">Status</th>
                                 <th class="py-2 pr-4">Slug</th>
                                 <th class="py-2 pr-4">Criada em</th>
                                 <th class="py-2 pr-4 text-right">Ações</th>
@@ -45,16 +46,38 @@
                                 @php
                                     $typeLabel = $b->direction === 'RECEIVABLE' ? 'A receber' : 'A pagar';
                                     $hasOccurrences = (int) ($b->occurrences_count ?? 0) > 0;
+                                    $isActive = (bool) ($b->is_active ?? true);
                                 @endphp
 
-                                <tr class="hover:bg-gray-50">
+                                <tr class="hover:bg-gray-50 {{ $isActive ? '' : 'opacity-60' }}">
                                     <td class="py-3 pr-4 font-medium text-gray-900">{{ $b->name }}</td>
                                     <td class="py-3 pr-4 text-gray-700">{{ $typeLabel }}</td>
+
+                                    <td class="py-3 pr-4">
+                                        @if ($isActive)
+                                            <span class="inline-flex items-center rounded-full bg-green-50 border border-green-200 px-2 py-0.5 text-green-800 text-xs">
+                                                Ativa
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center rounded-full bg-gray-50 border border-gray-200 px-2 py-0.5 text-gray-700 text-xs">
+                                                Inativa
+                                            </span>
+                                        @endif
+                                    </td>
+
                                     <td class="py-3 pr-4 text-gray-500 font-mono">{{ $b->slug }}</td>
                                     <td class="py-3 pr-4 text-gray-500 whitespace-nowrap">{{ $b->created_at?->toDateString() }}</td>
 
                                     <td class="py-3 pr-4">
                                         <div class="flex items-center justify-end gap-3">
+
+                                            <form method="POST" action="{{ route('family.bills.toggleActive', ['family' => $family, 'bill' => $b]) }}">
+                                                @csrf
+                                                <button type="submit" class="text-gray-800 hover:text-gray-900 underline">
+                                                    {{ $isActive ? 'Inativar' : 'Ativar' }}
+                                                </button>
+                                            </form>
+
                                             <a href="{{ route('family.bills.edit', ['family' => $family, 'bill' => $b]) }}"
                                                class="text-gray-800 hover:text-gray-900 underline">
                                                 Editar
@@ -83,7 +106,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td class="py-3 text-gray-500" colspan="5">Nenhuma conta cadastrada.</td>
+                                    <td class="py-3 text-gray-500" colspan="6">Nenhuma conta cadastrada.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -91,6 +114,7 @@
 
                     <p class="mt-4 text-xs text-gray-500">
                         Observação: contas com ocorrências (lançamentos) vinculadas não podem ser removidas.
+                        Use “Inativar” para parar de usar sem apagar histórico.
                     </p>
                 </div>
             </div>

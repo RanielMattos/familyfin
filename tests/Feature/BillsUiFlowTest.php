@@ -125,4 +125,56 @@ class BillsUiFlowTest extends TestCase
             'id' => $bill->id,
         ]);
     }
+
+    public function test_member_can_toggle_bill_active_status(): void
+    {
+        $user = User::factory()->create();
+
+        $family = Family::factory()->create([
+            'created_by_user_id' => $user->id,
+        ]);
+
+        FamilyMember::factory()->owner()->create([
+            'family_id' => $family->id,
+            'user_id'   => $user->id,
+        ]);
+
+        $this->actingAs($user);
+
+        // cria conta via fluxo real
+        $this->post(route('family.bills.store', ['family' => $family]), [
+            'name'      => 'Internet',
+            'direction' => 'PAYABLE',
+        ])->assertRedirect(route('family.bills.index', ['family' => $family]));
+
+        $bill = Bill::query()
+            ->where('family_id', $family->id)
+            ->where('name', 'Internet')
+            ->firstOrFail();
+
+        // default do banco: is_active=true
+        $this->assertTrue((bool) $bill->is_active);
+
+        // inativa
+        $this->post(route('family.bills.toggleActive', ['family' => $family, 'bill' => $bill]))
+            ->assertRedirect(route('family.bills.index', ['family' => $family]));
+
+        $this->get(route('family.bills.index', ['family' => $family]))
+            ->assertOk()
+            ->assertSee('Conta inativada com sucesso.');
+
+        $bill->refresh();
+        $this->assertFalse((bool) $bill->is_active);
+
+        // ativa novamente
+        $this->post(route('family.bills.toggleActive', ['family' => $family, 'bill' => $bill]))
+            ->assertRedirect(route('family.bills.index', ['family' => $family]));
+
+        $this->get(route('family.bills.index', ['family' => $family]))
+            ->assertOk()
+            ->assertSee('Conta ativada com sucesso.');
+
+        $bill->refresh();
+        $this->assertTrue((bool) $bill->is_active);
+    }
 }
