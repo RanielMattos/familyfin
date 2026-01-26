@@ -30,7 +30,7 @@ class BillsUiFlowTest extends TestCase
         $this->actingAs($user);
 
         // abre create
-        $this->get(route('family.bills.create', ['family' => $family->id]))
+        $this->get(route('family.bills.create', ['family' => $family]))
             ->assertOk()
             ->assertSee('Nova Conta');
 
@@ -40,19 +40,19 @@ class BillsUiFlowTest extends TestCase
             'direction' => 'PAYABLE',
         ];
 
-        $this->post(route('family.bills.store', ['family' => $family->id]), $payload)
-            ->assertRedirect(route('family.bills.index', ['family' => $family->id]));
+        $this->post(route('family.bills.store', ['family' => $family]), $payload)
+            ->assertRedirect(route('family.bills.index', ['family' => $family]));
 
         // confirma sucesso e presença na listagem
-        $this->get(route('family.bills.index', ['family' => $family->id]))
+        $this->get(route('family.bills.index', ['family' => $family]))
             ->assertOk()
             ->assertSee('Conta criada com sucesso.')
             ->assertSee('Internet');
 
         $this->assertDatabaseHas('bills', [
-            'family_id'  => $family->id,
-            'name'       => 'Internet',
-            'direction'  => 'PAYABLE',
+            'family_id' => $family->id,
+            'name'      => 'Internet',
+            'direction' => 'PAYABLE',
         ]);
 
         $bill = Bill::query()
@@ -62,5 +62,67 @@ class BillsUiFlowTest extends TestCase
 
         $this->assertNotNull($bill);
         $this->assertNotEmpty($bill->slug);
+    }
+
+    public function test_member_can_edit_and_delete_bill(): void
+    {
+        $user = User::factory()->create();
+
+        $family = Family::factory()->create([
+            'created_by_user_id' => $user->id,
+        ]);
+
+        FamilyMember::factory()->owner()->create([
+            'family_id' => $family->id,
+            'user_id'   => $user->id,
+        ]);
+
+        $this->actingAs($user);
+
+        // cria uma conta via fluxo real (não depende de factory de Bill)
+        $this->post(route('family.bills.store', ['family' => $family]), [
+            'name'      => 'Internet',
+            'direction' => 'PAYABLE',
+        ])->assertRedirect(route('family.bills.index', ['family' => $family]));
+
+        $bill = Bill::query()
+            ->where('family_id', $family->id)
+            ->where('name', 'Internet')
+            ->firstOrFail();
+
+        // abre edit
+        $this->get(route('family.bills.edit', ['family' => $family, 'bill' => $bill]))
+            ->assertOk()
+            ->assertSee('Editar Conta');
+
+        // atualiza
+        $this->put(route('family.bills.update', ['family' => $family, 'bill' => $bill]), [
+            'name'      => 'Internet 2',
+            'direction' => 'RECEIVABLE',
+        ])->assertRedirect(route('family.bills.index', ['family' => $family]));
+
+        $this->get(route('family.bills.index', ['family' => $family]))
+            ->assertOk()
+            ->assertSee('Conta atualizada com sucesso.')
+            ->assertSee('Internet 2');
+
+        $this->assertDatabaseHas('bills', [
+            'id'        => $bill->id,
+            'family_id' => $family->id,
+            'name'      => 'Internet 2',
+            'direction' => 'RECEIVABLE',
+        ]);
+
+        // exclui
+        $this->delete(route('family.bills.destroy', ['family' => $family, 'bill' => $bill]))
+            ->assertRedirect(route('family.bills.index', ['family' => $family]));
+
+        $this->get(route('family.bills.index', ['family' => $family]))
+            ->assertOk()
+            ->assertSee('Conta removida com sucesso.');
+
+        $this->assertDatabaseMissing('bills', [
+            'id' => $bill->id,
+        ]);
     }
 }

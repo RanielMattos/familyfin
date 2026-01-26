@@ -30,6 +30,7 @@
                                 <th class="py-2 pr-4">Tipo</th>
                                 <th class="py-2 pr-4">Slug</th>
                                 <th class="py-2 pr-4">Criada em</th>
+                                <th class="py-2 pr-4 text-right">Ações</th>
                             </tr>
                         </thead>
 
@@ -44,10 +45,32 @@
                                     <td class="py-3 pr-4 text-gray-700">{{ $typeLabel }}</td>
                                     <td class="py-3 pr-4 text-gray-500 font-mono">{{ $b->slug }}</td>
                                     <td class="py-3 pr-4 text-gray-500 whitespace-nowrap">{{ $b->created_at?->toDateString() }}</td>
+
+                                    <td class="py-3 pr-4">
+                                        <div class="flex items-center justify-end gap-3">
+                                            <a href="{{ route('family.bills.edit', ['family' => $family, 'bill' => $b]) }}"
+                                               class="text-gray-800 hover:text-gray-900 underline">
+                                                Editar
+                                            </a>
+
+                                            <form method="POST" action="{{ route('family.bills.destroy', ['family' => $family, 'bill' => $b]) }}">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button
+                                                    type="submit"
+                                                    class="text-red-700 hover:text-red-800 underline"
+                                                    onclick="return confirm('Remover esta conta?')"
+                                                >
+                                                    Excluir
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td class="py-3 text-gray-500" colspan="4">Nenhuma conta cadastrada.</td>
+                                    <td class="py-3 text-gray-500" colspan="5">Nenhuma conta cadastrada.</td>
                                 </tr>
                             @endforelse
                         </tbody>
