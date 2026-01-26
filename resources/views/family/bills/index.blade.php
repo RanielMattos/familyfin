@@ -21,6 +21,12 @@
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 overflow-x-auto">
                     <table class="min-w-full text-sm">
@@ -38,6 +44,7 @@
                             @forelse($bills as $b)
                                 @php
                                     $typeLabel = $b->direction === 'RECEIVABLE' ? 'A receber' : 'A pagar';
+                                    $hasOccurrences = (int) ($b->occurrences_count ?? 0) > 0;
                                 @endphp
 
                                 <tr class="hover:bg-gray-50">
@@ -53,18 +60,24 @@
                                                 Editar
                                             </a>
 
-                                            <form method="POST" action="{{ route('family.bills.destroy', ['family' => $family, 'bill' => $b]) }}">
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="text-red-700 hover:text-red-800 underline"
-                                                    onclick="return confirm('Remover esta conta?')"
-                                                >
+                                            @if ($hasOccurrences)
+                                                <span class="text-gray-400 cursor-not-allowed" title="Esta conta possui ocorrências vinculadas">
                                                     Excluir
-                                                </button>
-                                            </form>
+                                                </span>
+                                            @else
+                                                <form method="POST" action="{{ route('family.bills.destroy', ['family' => $family, 'bill' => $b]) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button
+                                                        type="submit"
+                                                        class="text-red-700 hover:text-red-800 underline"
+                                                        onclick="return confirm('Remover esta conta?')"
+                                                    >
+                                                        Excluir
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -75,6 +88,10 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    <p class="mt-4 text-xs text-gray-500">
+                        Observação: contas com ocorrências (lançamentos) vinculadas não podem ser removidas.
+                    </p>
                 </div>
             </div>
 

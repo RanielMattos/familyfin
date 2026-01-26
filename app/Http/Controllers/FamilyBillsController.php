@@ -15,9 +15,10 @@ class FamilyBillsController extends Controller
     {
         $bills = Bill::query()
             ->where('family_id', $family->id)
+            ->withCount('occurrences')
             ->orderBy('direction')
             ->orderBy('name')
-            ->get(['id', 'name', 'direction', 'slug', 'created_at']);
+            ->get(['id', 'name', 'direction', 'slug', 'created_at', 'family_id']);
 
         return view('family.bills.index', [
             'family' => $family,
@@ -89,6 +90,13 @@ class FamilyBillsController extends Controller
     public function destroy(Family $family, Bill $bill): RedirectResponse
     {
         $this->ensureBillBelongsToFamily($family, $bill);
+
+        // Segurança: evitar apagar ocorrências via cascade sem querer
+        if ($bill->occurrences()->exists()) {
+            return redirect()
+                ->route('family.bills.index', $family)
+                ->with('error', 'Não é possível remover esta conta porque ela possui ocorrências (lançamentos) vinculadas.');
+        }
 
         $bill->delete();
 
