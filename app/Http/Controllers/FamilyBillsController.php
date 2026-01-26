@@ -21,7 +21,7 @@ class FamilyBillsController extends Controller
 
         return view('family.bills.index', [
             'family' => $family,
-            'bills'  => $bills,
+            'bills' => $bills,
         ]);
     }
 
