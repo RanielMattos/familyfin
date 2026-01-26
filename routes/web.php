@@ -9,6 +9,7 @@ use App\Http\Controllers\FamilyDashboardController;
 use App\Http\Controllers\FamilyPlanpagPageController;
 use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\PlanpagController;
+use App\Http\Controllers\FamilyBillsController;
 
 use App\Http\Middleware\EnsureFamilyAccess;
 use App\Http\Middleware\AutoActivateFamily;
@@ -92,6 +93,17 @@ Route::middleware('auth')->group(function () {
             // Já existente (JSON)
             Route::get('/taxonomia', [TaxonomyController::class, 'index'])
                 ->name('family.taxonomy');
+
+            // Bills routes
+            Route::get('/bills/create', [FamilyBillsController::class, 'create'])
+                ->name('family.bills.create');
+
+            Route::post('/bills', [FamilyBillsController::class, 'store'])
+                ->name('family.bills.store');
+                
+            Route::get('/bills', [FamilyBillsController::class, 'index'])
+                ->name('family.bills.index');
+
         });
 });
 
