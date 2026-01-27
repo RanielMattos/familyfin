@@ -75,6 +75,83 @@ class PlanpagUiPageTest extends TestCase
             ->assertDontSee('2026-03-10');
     }
 
+    public function test_planpag_page_shows_toggle_actions_based_on_status(): void
+    {
+        $user = User::factory()->create();
+
+        $bill = Bill::factory()->payable()->create([
+            'name' => 'Internet',
+            'slug' => 'internet',
+            'created_by_user_id' => $user->id,
+        ]);
+
+        FamilyMember::factory()->owner()->create([
+            'family_id' => $bill->family_id,
+            'user_id' => $user->id,
+        ]);
+
+        $open = BillOccurrence::create([
+            'bill_id' => $bill->id,
+            'competence' => '2026-02-01',
+            'due_date' => '2026-02-10',
+            'planned_amount_cents' => 12990,
+            'paid_amount_cents' => 0,
+            'status' => BillOccurrence::STATUS_OPEN,
+        ]);
+
+        $paid = BillOccurrence::create([
+            'bill_id' => $bill->id,
+            'competence' => '2026-02-01',
+            'due_date' => '2026-02-11',
+            'planned_amount_cents' => 12990,
+            'paid_amount_cents' => 12990,
+            'status' => BillOccurrence::STATUS_PAID,
+            'paid_at' => '2026-02-11',
+        ]);
+
+        $canceled = BillOccurrence::create([
+            'bill_id' => $bill->id,
+            'competence' => '2026-02-01',
+            'due_date' => '2026-02-12',
+            'planned_amount_cents' => 12990,
+            'paid_amount_cents' => 0,
+            'status' => 'CANCELED',
+        ]);
+
+        $url = route('family.planpag', [
+            'family' => $bill->family_id,
+            'from' => '2026-02-01',
+            'to' => '2026-02-28',
+        ], false);
+
+        $familyId = (string) $bill->family_id;
+
+        $openMarkPath = "/f/{$familyId}/planpag/{$open->id}/mark-paid";
+        $openUnmarkPath = "/f/{$familyId}/planpag/{$open->id}/unmark-paid";
+
+        $paidMarkPath = "/f/{$familyId}/planpag/{$paid->id}/mark-paid";
+        $paidUnmarkPath = "/f/{$familyId}/planpag/{$paid->id}/unmark-paid";
+
+        $canceledMarkPath = "/f/{$familyId}/planpag/{$canceled->id}/mark-paid";
+        $canceledUnmarkPath = "/f/{$familyId}/planpag/{$canceled->id}/unmark-paid";
+
+        $this->actingAs($user)
+            ->get($url)
+            ->assertOk()
+            // OPEN: tem mark-paid, não tem unmark-paid
+            ->assertSee($openMarkPath, false)
+            ->assertDontSee($openUnmarkPath, false)
+            // PAID: tem unmark-paid, não tem mark-paid
+            ->assertSee($paidUnmarkPath, false)
+            ->assertDontSee($paidMarkPath, false)
+            // CANCELED: não tem ações
+            ->assertDontSee($canceledMarkPath, false)
+            ->assertDontSee($canceledUnmarkPath, false)
+            // sanity: textos existem na UI
+            ->assertSee('Marcar como pago')
+            ->assertSee('Desfazer');
+    }
+
     public function test_member_can_mark_occurrence_as_paid_and_defaults_paid_amount_to_planned(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-02-15'));
