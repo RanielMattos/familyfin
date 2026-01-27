@@ -11,14 +11,12 @@ class FamilyPlanpagActionsController extends Controller
 {
     public function markPaid(Request $request, Family $family, BillOccurrence $occurrence): RedirectResponse
     {
-        // garante que a ocorrência pertence à família da rota
         $occurrence->loadMissing('bill:id,family_id');
 
         if (! $occurrence->bill || (string) $occurrence->bill->family_id !== (string) $family->id) {
             abort(404);
         }
 
-        // idempotente: se já estiver pago, não quebra nada
         if ($occurrence->status !== BillOccurrence::STATUS_PAID) {
             $paidAmountCents = $request->integer('paid_amount_cents', (int) $occurrence->planned_amount_cents);
 
@@ -32,8 +30,24 @@ class FamilyPlanpagActionsController extends Controller
             $occurrence->save();
         }
 
-        return redirect()
-            ->back()
-            ->with('success', 'Pagamento registrado com sucesso.');
+        return redirect()->back()->with('success', 'Pagamento registrado com sucesso.');
+    }
+
+    public function unmarkPaid(Family $family, BillOccurrence $occurrence): RedirectResponse
+    {
+        $occurrence->loadMissing('bill:id,family_id');
+
+        if (! $occurrence->bill || (string) $occurrence->bill->family_id !== (string) $family->id) {
+            abort(404);
+        }
+
+        if ($occurrence->status === BillOccurrence::STATUS_PAID) {
+            $occurrence->status = BillOccurrence::STATUS_OPEN;
+            $occurrence->paid_amount_cents = 0;
+            $occurrence->paid_at = null;
+            $occurrence->save();
+        }
+
+        return redirect()->back()->with('success', 'Pagamento desfeito com sucesso.');
     }
 }
