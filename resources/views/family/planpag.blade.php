@@ -109,9 +109,11 @@
                                         $plannedCents = (int) ($o->planned_amount_cents ?? 0);
                                         $paidCents    = (int) ($o->paid_amount_cents ?? 0);
 
-                                        $isPaid = $status === 'PAID';
+                                        $isPaid     = $status === 'PAID';
                                         $isCanceled = in_array($status, ['CANCELED', 'CANCELLED'], true);
-                                        $canMarkPaid = !$isPaid && !$isCanceled;
+
+                                        $canMarkPaid   = ! $isPaid && ! $isCanceled;
+                                        $canUnmarkPaid = $isPaid && ! $isCanceled;
                                     @endphp
 
                                     <tr class="hover:bg-gray-50">
@@ -154,6 +156,22 @@
                                                         Marcar como pago
                                                     </button>
                                                 </form>
+                                            @elseif ($canUnmarkPaid)
+                                                <form method="POST"
+                                                      action="{{ route('family.planpag.unmarkPaid', ['family' => $family, 'occurrence' => $o]) }}"
+                                                      class="inline">
+                                                    @csrf
+                                                    <input type="hidden" name="from" value="{{ $fromValue }}">
+                                                    <input type="hidden" name="to" value="{{ $toValue }}">
+
+                                                    <button
+                                                        type="submit"
+                                                        class="inline-flex items-center px-3 py-1.5 bg-slate-700 text-white text-xs font-semibold rounded hover:bg-slate-800"
+                                                        onclick="return confirm('Desfazer pagamento?')"
+                                                    >
+                                                        Desfazer
+                                                    </button>
+                                                </form>
                                             @else
                                                 <span class="text-xs text-gray-400">-</span>
                                             @endif
@@ -169,7 +187,7 @@
                     </div>
 
                     <p class="mt-4 text-xs text-gray-500">
-                        Dica: “Marcar como pago” vai registrar o pagamento automático (no próximo passo a gente define regra exata).
+                        Dica: “Marcar como pago” preenche o valor pago automaticamente. “Desfazer” volta para OPEN e zera pagamento.
                     </p>
                 </div>
             </div>
