@@ -25,6 +25,18 @@
 
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6">
+                    @if (session('success'))
+                        <div class="mb-4 rounded-md bg-green-50 border border-green-200 p-4 text-sm text-green-800">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-4 text-sm text-red-800">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     @if ($errors->any())
                         <div class="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
                             <ul class="list-disc pl-5 space-y-1">
@@ -78,6 +90,7 @@
                                     <th class="py-2 pr-6">Status</th>
                                     <th class="py-2 pr-6 text-right">Previsto</th>
                                     <th class="py-2 pr-6 text-right">Pago</th>
+                                    <th class="py-2 pr-0 text-right whitespace-nowrap">Ações</th>
                                 </tr>
                             </thead>
 
@@ -88,13 +101,17 @@
 
                                         $badgeClass = match ($status) {
                                             'PAID' => 'bg-emerald-100 text-emerald-800',
-                                            'CANCELLED', 'CANCELED' => 'bg-gray-100 text-gray-700',
-                                            'OVERDUE' => 'bg-red-100 text-red-800',
+                                            'CANCELED', 'CANCELLED' => 'bg-gray-100 text-gray-700',
+                                            'LATE', 'OVERDUE' => 'bg-red-100 text-red-800',
                                             default => 'bg-amber-100 text-amber-800',
                                         };
 
                                         $plannedCents = (int) ($o->planned_amount_cents ?? 0);
                                         $paidCents    = (int) ($o->paid_amount_cents ?? 0);
+
+                                        $isPaid = $status === 'PAID';
+                                        $isCanceled = in_array($status, ['CANCELED', 'CANCELLED'], true);
+                                        $canMarkPaid = !$isPaid && !$isCanceled;
                                     @endphp
 
                                     <tr class="hover:bg-gray-50">
@@ -119,15 +136,41 @@
                                         <td class="py-3 pr-6 text-right tabular-nums text-gray-700 whitespace-nowrap">
                                             R$ {{ number_format($paidCents / 100, 2, ',', '.') }}
                                         </td>
+
+                                        <td class="py-3 pr-0 text-right whitespace-nowrap">
+                                            @if ($canMarkPaid)
+                                                <form method="POST"
+                                                      action="{{ route('family.planpag.markPaid', ['family' => $family, 'occurrence' => $o]) }}"
+                                                      class="inline">
+                                                    @csrf
+                                                    <input type="hidden" name="from" value="{{ $fromValue }}">
+                                                    <input type="hidden" name="to" value="{{ $toValue }}">
+
+                                                    <button
+                                                        type="submit"
+                                                        class="inline-flex items-center px-3 py-1.5 bg-emerald-600 text-white text-xs font-semibold rounded hover:bg-emerald-700"
+                                                        onclick="return confirm('Marcar como pago?')"
+                                                    >
+                                                        Marcar como pago
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span class="text-xs text-gray-400">-</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td class="py-3 text-gray-500" colspan="5">Nenhuma ocorrência no período.</td>
+                                        <td class="py-3 text-gray-500" colspan="6">Nenhuma ocorrência no período.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+
+                    <p class="mt-4 text-xs text-gray-500">
+                        Dica: “Marcar como pago” vai registrar o pagamento automático (no próximo passo a gente define regra exata).
+                    </p>
                 </div>
             </div>
 
