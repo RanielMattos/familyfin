@@ -114,6 +114,9 @@
 
                                         $canMarkPaid   = ! $isPaid && ! $isCanceled;
                                         $canUnmarkPaid = $isPaid && ! $isCanceled;
+
+                                        // Placeholder BR (ex: 129,90)
+                                        $plannedPlaceholder = number_format($plannedCents / 100, 2, ',', '.');
                                     @endphp
 
                                     <tr class="hover:bg-gray-50">
@@ -148,13 +151,25 @@
                                                     <input type="hidden" name="from" value="{{ $fromValue }}">
                                                     <input type="hidden" name="to" value="{{ $toValue }}">
 
-                                                    <button
-                                                        type="submit"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-emerald-600 text-white text-xs font-semibold rounded hover:bg-emerald-700"
-                                                        onclick="return confirm('Marcar como pago?')"
-                                                    >
-                                                        Marcar como pago
-                                                    </button>
+                                                    <div class="inline-flex items-center gap-2 justify-end">
+                                                        <input
+                                                            type="text"
+                                                            name="paid_amount"
+                                                            inputmode="decimal"
+                                                            class="h-8 w-28 rounded-md border-gray-300 text-right text-xs shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                            placeholder="{{ $plannedPlaceholder }}"
+                                                            title="Valor pago em reais (ex: 129,90). Se vazio, usa o valor previsto."
+                                                            aria-label="Valor pago em reais"
+                                                        />
+
+                                                        <button
+                                                            type="submit"
+                                                            class="inline-flex items-center px-3 py-1.5 bg-emerald-600 text-white text-xs font-semibold rounded hover:bg-emerald-700"
+                                                            onclick="return confirm('Marcar como pago?')"
+                                                        >
+                                                            Marcar como pago
+                                                        </button>
+                                                    </div>
                                                 </form>
                                             @elseif ($canUnmarkPaid)
                                                 <form method="POST"
@@ -187,7 +202,7 @@
                     </div>
 
                     <p class="mt-4 text-xs text-gray-500">
-                        Dica: “Marcar como pago” preenche o valor pago automaticamente. “Desfazer” volta para OPEN e zera pagamento.
+                        Dica: se “Valor pago” ficar vazio, assume o valor previsto. “Desfazer” volta para OPEN e zera pagamento.
                     </p>
                 </div>
             </div>
