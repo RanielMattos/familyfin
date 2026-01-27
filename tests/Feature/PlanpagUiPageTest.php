@@ -189,7 +189,7 @@ class PlanpagUiPageTest extends TestCase
             'occurrence' => $occurrence->id,
         ], false);
 
-        // Sem enviar paid_amount_cents: deve assumir planned_amount_cents (idempotente)
+        // Sem enviar paid_amount: deve assumir planned_amount_cents
         $this->actingAs($user)
             ->from($planpagUrl)
             ->post($markPaidUrl, [])
@@ -204,10 +204,60 @@ class PlanpagUiPageTest extends TestCase
         $this->assertSame('2026-02-15', $occurrence->paid_at->toDateString());
     }
 
-    public function test_member_can_unmark_paid_occurrence(): void
+    public function test_member_can_mark_occurrence_as_paid_with_custom_amount(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-02-15'));
 
+        $user = User::factory()->create();
+
+        $bill = Bill::factory()->payable()->create([
+            'name' => 'Internet',
+            'slug' => 'internet',
+            'created_by_user_id' => $user->id,
+        ]);
+
+        FamilyMember::factory()->owner()->create([
+            'family_id' => $bill->family_id,
+            'user_id' => $user->id,
+        ]);
+
+        $occurrence = BillOccurrence::create([
+            'bill_id' => $bill->id,
+            'competence' => '2026-02-01',
+            'due_date' => '2026-02-10',
+            'planned_amount_cents' => 12990,
+            'paid_amount_cents' => 0,
+            'status' => BillOccurrence::STATUS_OPEN,
+        ]);
+
+        $planpagUrl = route('family.planpag', [
+            'family' => $bill->family_id,
+            'from' => '2026-02-01',
+            'to' => '2026-02-28',
+        ], false);
+
+        $markPaidUrl = route('family.planpag.markPaid', [
+            'family' => $bill->family_id,
+            'occurrence' => $occurrence->id,
+        ], false);
+
+        // Envia em reais (formato BR)
+        $this->actingAs($user)
+            ->from($planpagUrl)
+            ->post($markPaidUrl, ['paid_amount' => '100,00'])
+            ->assertRedirect($planpagUrl)
+            ->assertSessionHas('success', 'Pagamento registrado com sucesso.');
+
+        $occurrence->refresh();
+
+        $this->assertSame(BillOccurrence::STATUS_PAID, $occurrence->status);
+        $this->assertSame(10000, (int) $occurrence->paid_amount_cents);
+        $this->assertNotNull($occurrence->paid_at);
+        $this->assertSame('2026-02-15', $occurrence->paid_at->toDateString());
+    }
+
+    public function test_member_can_unmark_paid_occurrence(): void
+    {
         $user = User::factory()->create();
 
         $bill = Bill::factory()->payable()->create([
