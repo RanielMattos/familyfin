@@ -44,18 +44,18 @@ Route::get('/dashboard', DashboardController::class)
 
 Route::middleware('auth')->group(function () {
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Profile
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Family management (global, not /f/{family})
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
     Route::post('/families', [FamilyController::class, 'store'])->name('families.store');
 
@@ -65,18 +65,18 @@ Route::middleware('auth')->group(function () {
         ->name('families.activate');
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Family tenancy core (tests depend on this)
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
     Route::get('/f/{family}/ping', function () {
         return response()->json(['ok' => true]);
     })->middleware(EnsureFamilyAccess::class);
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Family-scoped routes (product UI)
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | Ordem importa:
     | 1) EnsureFamilyAccess: garante que o usuário é membro e resolve o {family}
     | 2) AutoActivateFamily: marca esta family como ativa para o usuário
@@ -94,6 +94,9 @@ Route::middleware('auth')->group(function () {
             // Ações do PlanPag (HTML posts)
             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
                 ->name('family.planpag.markPaid');
+
+            Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
+                ->name('family.planpag.unmarkPaid');
 
             // Já existente (JSON)
             Route::get('/taxonomia', [TaxonomyController::class, 'index'])
@@ -121,7 +124,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/bills/{bill}/toggle-active', [FamilyBillsController::class, 'toggleActive'])
                 ->name('family.bills.toggleActive');
         });
-});
+}); // <- FECHA o group(auth)
 
 /*
 |--------------------------------------------------------------------------
