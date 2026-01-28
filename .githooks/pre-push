@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+blocked_remote_ref_regex='^refs/heads/(main|master)$'
+
+# stdin: <local ref> <local sha> <remote ref> <remote sha>
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [[ "${remote_ref:-}" =~ $blocked_remote_ref_regex ]]; then
+    echo "BLOCKED: direct push to '${remote_ref}' is not allowed."
+    echo "Push to a branch and open a PR."
+    exit 1
+  fi
+done
+
+# Extra safety: if currently on main, block any push attempt
+branch="$(git symbolic-ref --quiet --short HEAD || true)"
+if [[ "$branch" == "main" ]]; then
+  echo "BLOCKED: you are on 'main'. Avoid pushing from it."
+  echo "Switch to a branch and open a PR."
+  exit 1
+fi
+
+exit 0

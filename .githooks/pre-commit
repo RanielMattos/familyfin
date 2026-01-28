@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch="$(git symbolic-ref --quiet --short HEAD || true)"
+
+if [[ "$branch" == "main" ]]; then
+  echo "BLOCKED: direct commits on 'main' are not allowed."
+  echo "Use a feature branch and open a PR. Example: git switch -c feat/..."
+  exit 1
+fi
+
+exit 0
