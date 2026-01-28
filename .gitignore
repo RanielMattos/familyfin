@@ -40,3 +40,6 @@ storage/logs/*
 !storage/app/.gitignore
 !storage/framework/.gitignore
 !storage/logs/.gitignore
+
+# Local snapshots (generated)
+docs/snapshots/
