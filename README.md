@@ -14,7 +14,7 @@ Sistema web (futuro app) para organização financeira familiar: **Orçamento po
 - PHP 8.2+
 - Composer
 - SQLite (arquivo)
-- Git
+- Git 
 
 ## Setup rápido (primeira execução)
 ```bash
