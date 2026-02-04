@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use App\Models\Income;
 
 class Family extends Model
 {
@@ -32,11 +32,15 @@ class Family extends Model
     }
     public function scenarios(): HasMany
     {
-    return $this->hasMany(Scenario::class)->orderBy('start_date');
+        return $this->hasMany(Scenario::class)->orderBy('start_date');
     }
     public function bills(): HasMany
     {
-    return $this->hasMany(Bill::class)->orderBy('sort_order')->orderBy('name');
+        return $this->hasMany(Bill::class)->orderBy('sort_order')->orderBy('name');
+    }
+    public function incomes(): HasMany
+    {
+        return $this->hasMany(Income::class);
     }
 
 
