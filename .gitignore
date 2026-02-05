@@ -41,5 +41,8 @@ storage/logs/*
 !storage/framework/.gitignore
 !storage/logs/.gitignore
 
-# Local snapshots (generated)
-docs/snapshots/
+# Snapshots (ignora tudo, mas versiona os canônicos)
+docs/snapshots/*
+!docs/snapshots/SNAPSHOT_LATEST.md
+!docs/snapshots/SNAPSHOT_FULL.md
+!docs/snapshots/SNAPSHOT_SUMMARY.md
