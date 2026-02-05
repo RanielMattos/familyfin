@@ -1,12 +1,12 @@
 ﻿# FamilyFin Snapshot
 
-- Generated at: `2026-02-04T20:55:39.4353074-03:00`
+- Generated at: `2026-02-04T21:25:06.0209267-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
 - Branch: `main`
-- HEAD: `a537808`
+- HEAD: `53bafd8`
 - Upstream: `origin/main`
 
 ### Status
@@ -18,6 +18,7 @@
 ### Last 15 commits
 
 ```
+53bafd8 Track snapshot docs (LATEST + FULL) (#31)
 a537808 Add incomes feature (tenancy scoped) + IncomeFlowTest (#30)
 a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#29)
 4e52acd chore(docs): add snapshot system (latest + full) (#28)
@@ -32,7 +33,6 @@ ae54ec1 feat(planpag): allow custom paid amount on mark paid (#26)
 e7aad12 fix(bills): prevent deleting bills with occurrences (#19)
 1367eda feat(bills): add edit and delete flows (#18)
 dd8f5e4 fix(bills): redirect to index after create (#17)
-21e9275 feat(bills): add family-scoped bills UI (#16)
 ```
 
 ### Diff stat (working tree)
@@ -130,15 +130,15 @@ MAIL_MAILER=***REDACTED***
 ### PlanPag routes (filtered from route:list)
 
 ```
-  GET|HEAD        f/{family}/planpag .............................................. family.planpag ÔÇ║ FamilyPlanpagPageController
-  POST            f/{family}/planpag/{occurrence}/mark-paid .. family.planpag.markPaid ÔÇ║ FamilyPlanpagActionsController@markPaid
-  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid ÔÇ║ FamilyPlanpagActionsController@unmarkÔÇª
-  GET|HEAD        planpag .............................................................................. PlanpagController@index
+  GET|HEAD        f/{family}/planpag ............................................ family.planpag › FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid family.planpag.markPaid › FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid › FamilyPlanpagActionsController@unma…
+  GET|HEAD        planpag ............................................................................ PlanpagController@index
 ```
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260204_205539.txt`
+- Saved to: `docs\snapshots\routes_full_20260204_212505.txt`
 
 ## Notes
 
