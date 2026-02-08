@@ -35,6 +35,13 @@
                         >
                             PlanPag
                         </x-nav-link>
+
+                        <x-nav-link
+                            :href="route('incomes.index', ['family' => $familyForLinks])"
+                            :active="request()->routeIs('incomes.*')"
+                        >
+                            Receitas
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -117,6 +124,13 @@
                     :active="request()->routeIs('family.planpag')"
                 >
                     PlanPag
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link
+                    :href="route('incomes.index', ['family' => $familyForLinks])"
+                    :active="request()->routeIs('incomes.*')"
+                >
+                    Receitas
                 </x-responsive-nav-link>
             @endif
         </div>
