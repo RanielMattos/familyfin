@@ -2,29 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FamilyMember extends Model
 {
-    use HasUlids;
     use HasFactory, HasUlids;
 
+    public const ROLE_OWNER  = 'owner';
+    public const ROLE_MEMBER = 'member';
 
-    public const ROLE_OWNER  = 'OWNER';
-    public const ROLE_ADMIN  = 'ADMIN';
-    public const ROLE_MEMBER = 'MEMBER';
-    public const ROLE_VIEWER = 'VIEWER';
-
-    public const ROLES = [
-        self::ROLE_OWNER,
-        self::ROLE_ADMIN,
-        self::ROLE_MEMBER,
-        self::ROLE_VIEWER,
-    ];
+    protected $table = 'family_members';
 
     protected $fillable = [
         'family_id',
@@ -48,17 +38,4 @@ class FamilyMember extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    protected function casts(): array
-{
-    return [
-        'role' => 'string',
-    ];
-}
-
-public function setRoleAttribute($value): void
-{
-    $this->attributes['role'] = is_string($value) ? strtolower($value) : $value;
-}
-
 }

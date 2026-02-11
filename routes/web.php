@@ -111,7 +111,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/bills/{bill}/toggle-active', [FamilyBillsController::class, 'toggleActive'])->name('family.bills.toggleActive');
 
             // ✅ Incomes (novas rotas)
-            Route::resource('incomes', FamilyIncomesController::class)->except(['show', 'edit', 'create']);
+            Route::scopeBindings()->group(function () {
+                Route::resource('incomes', FamilyIncomesController::class)
+                    ->except(['show', 'edit', 'create']);
+            });
         });
 });
 
