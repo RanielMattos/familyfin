@@ -16,28 +16,30 @@ class IncomeFlowTest extends TestCase
     public function test_family_member_can_create_income(): void
     {
         $family = Family::factory()->create();
-        $user = User::factory()->create();
+        $user   = User::factory()->create();
 
-        // ✅ O QUE REALMENTE LIBERA O EnsureFamilyAccess:
+        // Garante membership (libera EnsureFamilyAccess)
         FamilyMember::factory()->owner()->create([
             'family_id' => $family->id,
-            'user_id' => $user->id,
+            'user_id'   => $user->id,
+            'is_active' => true,
+            'joined_at' => now(),
         ]);
 
         $this->actingAs($user);
 
-        $response = $this->post("/f/{$family->id}/incomes", [
+        $response = $this->post(route('incomes.store', ['family' => $family->id]), [
             'description' => 'Salário Mensal',
-            'amount' => 3500.75,
+            'amount'      => 3500.75,
             'received_at' => now()->toDateString(),
         ]);
 
         $response->assertRedirect();
 
         $this->assertDatabaseHas('incomes', [
-            'description' => 'Salário Mensal',
-            'amount' => 3500.75,
-            'family_id' => $family->id,
+            'family_id'    => $family->id,
+            'description'  => 'Salário Mensal',
+            'amount'       => 3500.75,
         ]);
     }
 
@@ -49,27 +51,81 @@ class IncomeFlowTest extends TestCase
         $userA = User::factory()->create();
         $userB = User::factory()->create();
 
-        // ✅ Vincula membros corretamente nas famílias
         FamilyMember::factory()->owner()->create([
             'family_id' => $familyA->id,
-            'user_id' => $userA->id,
+            'user_id'   => $userA->id,
+            'is_active' => true,
+            'joined_at' => now(),
         ]);
 
         FamilyMember::factory()->owner()->create([
             'family_id' => $familyB->id,
-            'user_id' => $userB->id,
+            'user_id'   => $userB->id,
+            'is_active' => true,
+            'joined_at' => now(),
         ]);
 
         Income::factory()->create([
-            'family_id' => $familyA->id,
-            'description' => 'Receita Oculta',
+            'family_id'    => $familyA->id,
+            'description'  => 'Receita Oculta',
+            'amount'       => 123.45,
+            'received_at'  => now()->toDateString(),
         ]);
 
         $this->actingAs($userB);
 
-        $response = $this->get("/f/{$familyB->id}/incomes");
+        $response = $this->get(route('incomes.index', ['family' => $familyB->id]));
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertDontSee('Receita Oculta');
+    }
+
+    public function test_member_of_two_families_cannot_update_or_delete_income_through_wrong_family_route(): void
+    {
+        $user = User::factory()->create();
+
+        $familyA = Family::factory()->create();
+        $familyB = Family::factory()->create();
+
+        // ✅ NUNCA use attach() aqui (pivô tem ULID). Crie via model/factory.
+        FamilyMember::factory()->owner()->create([
+            'family_id' => $familyA->id,
+            'user_id'   => $user->id,
+            'is_active' => true,
+            'joined_at' => now(),
+        ]);
+
+        FamilyMember::factory()->owner()->create([
+            'family_id' => $familyB->id,
+            'user_id'   => $user->id,
+            'is_active' => false,
+            'joined_at' => now(),
+        ]);
+
+        $income = Income::factory()->create([
+            'family_id'    => $familyA->id,
+            'description'  => 'A-only',
+            'amount'       => 123.45,
+            'received_at'  => now()->toDateString(),
+        ]);
+
+        $this->actingAs($user);
+
+        // ✅ Com scopeBindings, tentar acessar income(A) pela rota da family(B) dá 404.
+        $this->put(route('incomes.update', ['family' => $familyB->id, 'income' => $income->id]), [
+            'description' => 'hacked',
+            'amount'      => 999.99,
+            'received_at' => now()->toDateString(),
+        ])->assertNotFound();
+
+        $this->delete(route('incomes.destroy', ['family' => $familyB->id, 'income' => $income->id]))
+            ->assertNotFound();
+
+        // ✅ Confirma que não alterou nem deletou
+        $this->assertDatabaseHas('incomes', [
+            'id'          => $income->id,
+            'family_id'   => $familyA->id,
+            'description' => 'A-only',
+        ]);
     }
 }
