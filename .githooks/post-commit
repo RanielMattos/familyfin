@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+# Não atrapalha CI nem ambientes sem o script
+if [[ "${CI:-}" == "true" ]]; then exit 0; fi
+if [[ ! -f "./bin/snapshot.ps1" ]]; then exit 0; fi
+
+# Gera snapshots (não falha commit se PowerShell der ruim)
+powershell -NoProfile -ExecutionPolicy Bypass -File "./bin/snapshot.ps1" >/dev/null 2>&1 || true
+
+# Se mudou, só avisa (sem auto-commit)
+if ! git diff --quiet -- docs/snapshots/SNAPSHOT_LATEST.md docs/snapshots/SNAPSHOT_FULL.md 2>/dev/null; then
+  echo "SNAPSHOT: atualizado (LATEST/FULL)."
+  echo "Para versionar: git add docs/snapshots/SNAPSHOT_LATEST.md docs/snapshots/SNAPSHOT_FULL.md"
+  echo "              git commit -m \"Update snapshots\""
+fi
