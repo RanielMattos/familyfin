@@ -1,23 +1,29 @@
 ﻿# FamilyFin Snapshot
 
-- Generated at: `2026-02-04T21:25:06.0209267-03:00`
+- Generated at: `2026-02-11T20:05:43.5537821-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
-- Branch: `main`
-- HEAD: `53bafd8`
-- Upstream: `origin/main`
+- Branch: `chore/snapshot-update`
+- HEAD: `03b617a`
+- Upstream: `origin/chore/snapshot-update`
 
 ### Status
 
 ```
-## main...origin/main
+## chore/snapshot-update...origin/chore/snapshot-update [ahead 3, behind 2]
 ```
 
 ### Last 15 commits
 
 ```
+03b617a Fix incomes tenancy: scopeBindings + harden IncomeFlowTest (#38)
+11fd65d Fix/incomes policy (#37)
+b029d8d Add IncomePolicy (tenancy) + auto snapshot post-commit hook (#35)
+aafacd8 Improve incomes UI (table, edit, delete, totals) (#34)
+23db586 Add Receitas link to family navigation (#33)
+c11536f Update snapshots (#32)
 53bafd8 Track snapshot docs (LATEST + FULL) (#31)
 a537808 Add incomes feature (tenancy scoped) + IncomeFlowTest (#30)
 a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#29)
@@ -27,12 +33,6 @@ ae54ec1 feat(planpag): allow custom paid amount on mark paid (#26)
 588c073 test(planpag): cover unmark paid flow (#25)
 8ea343e feat(planpag): toggle paid action on UI (#24)
 0baedee feat(planpag): unmark occurrence as paid (#23)
-00bc96a feat(planpag): mark occurrence as paid (#22)
-5163e23 feat(planpag): add occurrence generator and command (#21)
-0042b1e feat(bills): toggle active status (#20)
-e7aad12 fix(bills): prevent deleting bills with occurrences (#19)
-1367eda feat(bills): add edit and delete flows (#18)
-dd8f5e4 fix(bills): redirect to index after create (#17)
 ```
 
 ### Diff stat (working tree)
@@ -49,9 +49,10 @@ dd8f5e4 fix(bills): redirect to index after create (#17)
 
 ```
 
-Mode   Length LastWriteTime       Name      
-----   ------ -------------       ----      
--a----    290 27/01/2026 21:33:38 pre-commit
+Mode   Length LastWriteTime       Name       
+----   ------ -------------       ----       
+-a----    759 11/02/2026 14:52:42 post-commit
+-a----    290 27/01/2026 21:33:38 pre-commit 
 -a----    686 27/01/2026 21:33:38 pre-push
 ```
 
@@ -99,7 +100,7 @@ MAIL_MAILER=***REDACTED***
 
 ## Key project files (fingerprints)
 
-- `routes/web.php` SHA1: `7e42a4c7587a4f9f700beed8cb8ea68740e488f4`
+- `routes/web.php` SHA1: `e2f034ff9ecad9638c56b03ec67c171b2d1fce4b`
 - `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `ba9e67bbc0b46993d9f805ccaf828facb224f9e0`
 - `resources/views/family/planpag.blade.php` SHA1: `210b29676169247478ea186304637bb6bd04d2ad`
 - `tests/Feature/PlanpagUiPageTest.php` SHA1: `55d97d8a3b5ce9f0a0b84e29f56d9062ab46bfd6`
@@ -130,15 +131,15 @@ MAIL_MAILER=***REDACTED***
 ### PlanPag routes (filtered from route:list)
 
 ```
-  GET|HEAD        f/{family}/planpag ............................................ family.planpag › FamilyPlanpagPageController
-  POST            f/{family}/planpag/{occurrence}/mark-paid family.planpag.markPaid › FamilyPlanpagActionsController@markPaid
-  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid › FamilyPlanpagActionsController@unma…
-  GET|HEAD        planpag ............................................................................ PlanpagController@index
+  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag › FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid › FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid › FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
 ```
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260204_212505.txt`
+- Saved to: `docs\snapshots\routes_full_20260211_200543.txt`
 
 ## Notes
 
