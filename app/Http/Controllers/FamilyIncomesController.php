@@ -12,8 +12,9 @@ class FamilyIncomesController extends Controller
 {
     public function index(Family $family): View
     {
-        $incomes = Income::query()
-            ->where('family_id', $family->id)
+        $this->authorize('viewAny', [Income::class, $family]);
+
+        $incomes = $family->incomes()
             ->orderByDesc('received_at')
             ->orderByDesc('id')
             ->get(['id', 'family_id', 'description', 'amount', 'received_at', 'created_at']);
@@ -26,6 +27,8 @@ class FamilyIncomesController extends Controller
 
     public function store(Request $request, Family $family): RedirectResponse
     {
+        $this->authorize('create', [Income::class, $family]);
+
         $data = $request->validate([
             'description' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'numeric', 'min:0'],
@@ -34,13 +37,15 @@ class FamilyIncomesController extends Controller
 
         $family->incomes()->create($data);
 
-        return redirect("/f/{$family->id}/incomes")
+        return redirect()
+            ->route('incomes.index', ['family' => $family])
             ->with('success', 'Receita adicionada com sucesso.');
     }
 
     public function update(Request $request, Family $family, Income $income): RedirectResponse
     {
-        $this->ensureIncomeBelongsToFamily($family, $income);
+        // Com Route::scopeBindings() um income fora da família vira 404 antes de chegar aqui.
+        $this->authorize('update', $income);
 
         $data = $request->validate([
             'description' => ['required', 'string', 'max:255'],
@@ -50,24 +55,19 @@ class FamilyIncomesController extends Controller
 
         $income->update($data);
 
-        return redirect("/f/{$family->id}/incomes")
+        return redirect()
+            ->route('incomes.index', ['family' => $family])
             ->with('success', 'Receita atualizada com sucesso.');
     }
 
     public function destroy(Family $family, Income $income): RedirectResponse
     {
-        $this->ensureIncomeBelongsToFamily($family, $income);
+        $this->authorize('delete', $income);
 
         $income->delete();
 
-        return redirect("/f/{$family->id}/incomes")
+        return redirect()
+            ->route('incomes.index', ['family' => $family])
             ->with('success', 'Receita removida com sucesso.');
-    }
-
-    private function ensureIncomeBelongsToFamily(Family $family, Income $income): void
-    {
-        if ((string) $income->family_id !== (string) $family->id) {
-            abort(404);
-        }
     }
 }
