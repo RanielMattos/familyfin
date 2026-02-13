@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Family;
 use App\Models\TaxonomyNode;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TaxonomyController extends Controller
 {
@@ -13,8 +15,18 @@ class TaxonomyController extends Controller
      *   { id, type, direction, name, slug, description, children: [ ... ] }
      * ]
      */
-    public function index(): JsonResponse
+    public function index(Request $request, ?Family $family = null): JsonResponse
     {
+        // Se a rota for /f/{family}/taxonomia, exige membership (Policy)
+        if ($family) {
+            $this->authorize('viewAny', [TaxonomyNode::class, $family]);
+        } else {
+            // Mantém /taxonomia funcionando como antes (se houver user, checa policy; se não, não bloqueia)
+            if ($request->user()) {
+                $this->authorize('viewAny', [TaxonomyNode::class, null]);
+            }
+        }
+
         $groups = TaxonomyNode::query()
             ->whereNull('family_id')
             ->where('type', TaxonomyNode::TYPE_GROUP)
