@@ -17,6 +17,8 @@ class FamilyPlanpagActionsController extends Controller
             abort(404);
         }
 
+        $this->authorize('update', $occurrence);
+
         if ($occurrence->status !== BillOccurrence::STATUS_PAID) {
             $paidAmountCents = null;
 
@@ -54,6 +56,8 @@ class FamilyPlanpagActionsController extends Controller
         if (! $occurrence->bill || (string) $occurrence->bill->family_id !== (string) $family->id) {
             abort(404);
         }
+
+        $this->authorize('update', $occurrence);
 
         if ($occurrence->status === BillOccurrence::STATUS_PAID) {
             $occurrence->status = BillOccurrence::STATUS_OPEN;

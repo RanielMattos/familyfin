@@ -13,6 +13,8 @@ class FamilyBillsController extends Controller
 {
     public function index(Family $family): View
     {
+        $this->authorize('viewAny', [Bill::class, $family]);
+
         $bills = Bill::query()
             ->where('family_id', $family->id)
             ->withCount('occurrences')
@@ -22,12 +24,14 @@ class FamilyBillsController extends Controller
 
         return view('family.bills.index', [
             'family' => $family,
-            'bills' => $bills,
+            'bills'  => $bills,
         ]);
     }
 
     public function create(Family $family): View
     {
+        $this->authorize('create', [Bill::class, $family]);
+
         return view('family.bills.create', [
             'family' => $family,
         ]);
@@ -35,6 +39,8 @@ class FamilyBillsController extends Controller
 
     public function store(StoreBillRequest $request, Family $family): RedirectResponse
     {
+        $this->authorize('create', [Bill::class, $family]);
+
         $validated = $request->validated();
 
         $slug = $this->uniqueSlugForFamily(
@@ -58,16 +64,18 @@ class FamilyBillsController extends Controller
     public function edit(Family $family, Bill $bill): View
     {
         $this->ensureBillBelongsToFamily($family, $bill);
+        $this->authorize('update', $bill);
 
         return view('family.bills.edit', [
             'family' => $family,
-            'bill' => $bill,
+            'bill'   => $bill,
         ]);
     }
 
     public function update(StoreBillRequest $request, Family $family, Bill $bill): RedirectResponse
     {
         $this->ensureBillBelongsToFamily($family, $bill);
+        $this->authorize('update', $bill);
 
         $validated = $request->validated();
 
@@ -90,6 +98,7 @@ class FamilyBillsController extends Controller
     public function destroy(Family $family, Bill $bill): RedirectResponse
     {
         $this->ensureBillBelongsToFamily($family, $bill);
+        $this->authorize('delete', $bill);
 
         // Segurança: evitar apagar ocorrências via cascade sem querer
         if ($bill->occurrences()->exists()) {
@@ -108,6 +117,7 @@ class FamilyBillsController extends Controller
     public function toggleActive(Family $family, Bill $bill): RedirectResponse
     {
         $this->ensureBillBelongsToFamily($family, $bill);
+        $this->authorize('toggleActive', $bill);
 
         $bill->is_active = ! (bool) $bill->is_active;
         $bill->save();
