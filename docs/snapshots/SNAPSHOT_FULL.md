@@ -1,10 +1,10 @@
 ﻿# FamilyFin FULL Snapshot (maximal, safe-redacted)
 
-- Generated at: `2026-02-13T16:51:21.2249111-03:00`
+- Generated at: `2026-02-13T18:36:41.5337206-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
-- Branch: `feat/rbac-family-members-policy`
-- HEAD: `6659fe2`
-- Upstream: `none`
+- Branch: `main`
+- HEAD: `d8e4164`
+- Upstream: `origin/main`
 - Safety: secrets redacted = ON
 
 
@@ -21,15 +21,15 @@ origin	https://github.com/RanielMattos/familyfin.git (push)
 ### Status
 
 ```
-## feat/rbac-family-members-policy
- M docs/snapshots/SNAPSHOT_FULL.md
+## main...origin/main
  M docs/snapshots/SNAPSHOT_LATEST.md
 ```
 
 ### Last 50 commits
 
 ```
-6659fe2 RBAC: add FamilyMemberPolicy and authorize family members
+d8e4164 RBAC: authorize bills and planpag via policies (#44)
+40e2265 Feat/rbac family members policy (#43)
 2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
 47bf31e Update snapshots (LATEST + FULL) (#41)
 0f6123b Add family members management (roles + UI) (#40)
@@ -78,7 +78,6 @@ dbbacb6 chore: add root healthcheck route
 6b9da56 feat: add planpag core and endpoint
 7193e81 feat: add scenarios and budget core
 e68a8a2 feat: add taxonomy seed and endpoint
-f5d3c6c feat: add family tenancy core
 ```
 
 ### First commit + total commits
@@ -87,7 +86,7 @@ f5d3c6c feat: add family tenancy core
 bb9dcf95527951ee44f43c6fe046a99bda125b42
 ```
 ```
-51
+52
 ```
 
 ## Git - Deep
@@ -98,17 +97,19 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 ```
   chore/guard-main
   chore/snapshot-update
-* feat/rbac-family-members-policy
+  feat/rbac-bills-planpag
   feat/rbac-roles
   fix/incomes-policy
   fix/incomes-tenancy
-  main
+* main
   remotes/origin/HEAD -> origin/main
   remotes/origin/RanielMattos-patch-1
   remotes/origin/chore/snapshot-update
   remotes/origin/chore/track-snapshots
   remotes/origin/feat/incomes-ui
   remotes/origin/feat/menu-receitas
+  remotes/origin/feat/rbac-bills-planpag
+  remotes/origin/feat/rbac-family-members-policy
   remotes/origin/feat/rbac-roles
   remotes/origin/fix/incomes-policy
   remotes/origin/fix/incomes-scope-bindings
@@ -126,7 +127,7 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 ### Describe
 
 ```
-6659fe2-dirty
+d8e4164-dirty
 ```
 
 ### Submodules
@@ -138,9 +139,8 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 ### Working tree diff stat
 
 ```
- docs/snapshots/SNAPSHOT_FULL.md   | 1408 +++++++++++++++++++------------------
- docs/snapshots/SNAPSHOT_LATEST.md |   30 +-
- 2 files changed, 728 insertions(+), 710 deletions(-)
+ docs/snapshots/SNAPSHOT_LATEST.md | 34 +++++++++++++++-------------------
+ 1 file changed, 15 insertions(+), 19 deletions(-)
 ```
 
 ### Tracked files (paths)
@@ -194,6 +194,8 @@ app/Models/Income.php
 app/Models/Scenario.php
 app/Models/TaxonomyNode.php
 app/Models/User.php
+app/Policies/BillOccurrencePolicy.php
+app/Policies/BillPolicy.php
 app/Policies/FamilyMemberPolicy.php
 app/Policies/IncomePolicy.php
 app/Providers/AppServiceProvider.php
@@ -359,13 +361,13 @@ vite.config.js
 100644 blob 784765e3a5961b9293b74158d8c270088ef4738a     800	app/Http/Controllers/Auth/VerifyEmailController.php
 100644 blob bd3e17ed1c3add3d68702e689a75dace1e0e3023     308	app/Http/Controllers/Controller.php
 100644 blob 2e8760627bd26f15d9b06cf6b87a3eb8b3593062     705	app/Http/Controllers/DashboardController.php
-100644 blob 2f6b29c9f173043c5c0933ae1b79e6df8e4a06d7    4358	app/Http/Controllers/FamilyBillsController.php
+100644 blob d02fefdf5f9eb574ae495d9ee2b5455e85542330    4723	app/Http/Controllers/FamilyBillsController.php
 100644 blob ef21fa10d11da34aff610e460dbdb523628e9448    1291	app/Http/Controllers/FamilyController.php
 100644 blob 97bde3e468fd84632c4a05f73fc820f7c17d7021     485	app/Http/Controllers/FamilyDashboardController.php
 100644 blob fe4eca3a82bcc7efdefc7ef54137fe21822693aa    2235	app/Http/Controllers/FamilyIncomesController.php
 100644 blob ec354c233b9772347d020b8e9611799a0f869bb0    5547	app/Http/Controllers/FamilyMembersController.php
-100644 blob 13b586e2f2ef8a016f2bc100a49d110fcb6026af    4377	app/Http/Controllers/FamilyPlanpagActionsController.php
-100644 blob 1af861b6c2491357e88cbd9f777da1ce956a7a68     903	app/Http/Controllers/FamilyPlanpagPageController.php
+100644 blob bd156504f441086e0950e17f4f33ef007d58dc49    4477	app/Http/Controllers/FamilyPlanpagActionsController.php
+100644 blob b83eddb276dd328abf6850664e6c70d8f08cfc64    1006	app/Http/Controllers/FamilyPlanpagPageController.php
 100644 blob 3427a887acd356384dccd154b470c55dde735628    3288	app/Http/Controllers/PlanpagController.php
 100644 blob a48eb8d829dc3b348d094c108fcda9219c5c4ee7    1416	app/Http/Controllers/ProfileController.php
 100644 blob efca4faddbb0f27ae3e52e13e835112e296f909c    1784	app/Http/Controllers/TaxonomyController.php
@@ -384,6 +386,8 @@ vite.config.js
 100644 blob 5da243d06484147890203933e74b6ff70fddc8ec    1103	app/Models/Scenario.php
 100644 blob 0a7e1b8bb54f16dfd25e3c2f2405ac88050d219a    1582	app/Models/TaxonomyNode.php
 100644 blob 6baa3966928694de19f57396816838536592bbcd    2223	app/Models/User.php
+100644 blob 9a1c22d8731e407b9c90bfba819b61eac916446c     650	app/Policies/BillOccurrencePolicy.php
+100644 blob 25dd7ac1532d255ad4177f7fa85981ca4eaeecc6     833	app/Policies/BillPolicy.php
 100644 blob 0dda4f81a2fd97693ec2b4c3508446befe75ea01    1217	app/Policies/FamilyMemberPolicy.php
 100644 blob 22df510fd159fc92eba951b079a7d2a184af8cf7    1954	app/Policies/IncomePolicy.php
 100644 blob 452e6b65b7a18aa7c3aaf886fd183a002d381e34     361	app/Providers/AppServiceProvider.php
@@ -438,8 +442,8 @@ vite.config.js
 100644 blob a3ac0624cb685cbe224755406bc8a8f9ee0bcccf     267	database/seeders/IncomeSeeder.php
 100644 blob d4c9573890792cf7a479219db3bb318950f6ffd0    6229	database/seeders/TaxonomySeeder.php
 100644 blob 6ec5420b491b5756ffc04685773ee76173695138     497	docs/SETUP_BREEZE.md
-100644 blob 6d2d48fefbdfcb80ab62192647ecbeb4c75c8d47   97901	docs/snapshots/SNAPSHOT_FULL.md
-100644 blob d57ad29e84b819ca241a7ed019acd4564cc83c35    4569	docs/snapshots/SNAPSHOT_LATEST.md
+100644 blob 614d90a2b8c91a0328ede78d4934990d9401cf1d  152987	docs/snapshots/SNAPSHOT_FULL.md
+100644 blob f642b53b8898bdfda003861170621e1a3efdaa81    5080	docs/snapshots/SNAPSHOT_LATEST.md
 100644 blob 84a34298c20446cf7f5c8a2ca68ef47b3164409e  136510	package-lock.json
 100644 blob 2ea7e1db406eda18cf430972ec87ac24d7d3499f     549	package.json
 100644 blob d703241533c7f007d11c7f25ea7772f0155fadb8    1284	phpunit.xml
@@ -526,7 +530,7 @@ vite.config.js
 ### Shortlog (authors)
 
 ```
-    51	RanielMattos
+    52	RanielMattos
 ```
 
 ### Full history (reverse, detailed)
@@ -681,11 +685,14 @@ Add family members management (roles + UI) (#40)
 47bf31e | 2026-02-13 12:03:07 -0300 | RanielMattos | 
 Update snapshots (LATEST + FULL) (#41)
 
-2303869 | 2026-02-13 16:27:40 -0300 | RanielMattos |  (origin/main, origin/HEAD, main)
+2303869 | 2026-02-13 16:27:40 -0300 | RanielMattos | 
 RBAC: add family role helpers and authorize incomes via policies (#42)
 
-6659fe2 | 2026-02-13 16:50:47 -0300 | RanielMattos |  (HEAD -> feat/rbac-family-members-policy)
-RBAC: add FamilyMemberPolicy and authorize family members
+40e2265 | 2026-02-13 16:53:51 -0300 | RanielMattos | 
+Feat/rbac family members policy (#43)
+
+d8e4164 | 2026-02-13 18:35:31 -0300 | RanielMattos |  (HEAD -> main, origin/main, origin/HEAD)
+RBAC: authorize bills and planpag via policies (#44)
 ```
 
 ## Hooks (local main guard)
@@ -799,7 +806,7 @@ Run the "diagnose" command to get more detailed diagnostics output.
 brick/math                         0.14.1  Arbitrary-precision arithmetic library
 carbonphp/carbon-doctrine-types    3.2.0   Types to use Carbon in Doctrine
 dflydev/dot-access-data            3.0.3   Given a deep data structure, access data by dot notation.
-doctrine/inflector                 2.1.0   PHP Doctrine Inflector is a small library that can perform string manipulations with regard to upper/lowerc...
+doctrine/inflector                 2.1.0   PHP Doctrine Inflector is a small library that can perform string manipulations with regard to upper/lowercase and s...
 doctrine/lexer                     3.0.1   PHP Doctrine Lexer parser library that can be used in Top-Down, Recursive Descent Parsers.
 dragonmantank/cron-expression      3.6.0   CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due
 egulias/email-validator            4.0.4   A library for validating emails against several RFCs
@@ -820,7 +827,7 @@ laravel/prompts                    0.3.10  Add beautiful and user-friendly forms
 laravel/sail                       1.52.0  Docker files for running a basic Laravel application.
 laravel/serializable-closure       2.0.8   Laravel Serializable Closure provides an easy and secure way to serialize closures in PHP.
 laravel/tinker                     2.11.0  Powerful REPL for the Laravel framework.
-league/commonmark                  2.8.0   Highly-extensible PHP Markdown parser which fully supports the CommonMark spec and GitHub-Flavored Markdown...
+league/commonmark                  2.8.0   Highly-extensible PHP Markdown parser which fully supports the CommonMark spec and GitHub-Flavored Markdown (GFM)
 league/config                      1.2.0   Define configuration arrays with strict schemas and access values with dot notation
 league/flysystem                   3.31.0  File storage abstraction for PHP
 league/flysystem-local             3.31.0  Local filesystem adapter for Flysystem.
@@ -832,7 +839,7 @@ monolog/monolog                    3.10.0  Sends your logs to files, sockets, in
 myclabs/deep-copy                  1.13.4  Create deep copies (clones) of your objects
 nesbot/carbon                      3.11.0  An API extension for DateTime that supports 281 different languages.
 nette/schema                       1.3.3    Nette Schema: validating data structures against a given Schema.
-nette/utils                        4.1.1     Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encodin...
+nette/utils                        4.1.1     Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decodin...
 nikic/php-parser                   5.7.0   A PHP parser written in PHP
 nunomaduro/collision               8.8.3   Cli error handling for console/command-line PHP applications.
 nunomaduro/termwind                2.3.3   Its like Tailwind CSS, but for the console.
@@ -878,7 +885,7 @@ symfony/console                    7.4.3   Eases the creation of beautiful and t
 symfony/css-selector               7.4.0   Converts CSS selectors to XPath expressions
 symfony/deprecation-contracts      3.6.0   A generic function and convention to trigger deprecation notices
 symfony/error-handler              7.4.0   Provides tools to manage errors and ease debugging PHP code
-symfony/event-dispatcher           7.4.0   Provides tools that allow your application components to communicate with each other by dispatching events ...
+symfony/event-dispatcher           7.4.0   Provides tools that allow your application components to communicate with each other by dispatching events and liste...
 symfony/event-dispatcher-contracts 3.6.0   Generic abstractions related to dispatching event
 symfony/finder                     7.4.3   Finds files and directories via an intuitive fluent interface
 symfony/http-foundation            7.4.3   Defines an object-oriented layer for the HTTP specification
@@ -898,14 +905,14 @@ symfony/polyfill-uuid              1.33.0  Symfony polyfill for uuid functions
 symfony/process                    7.4.3   Executes commands in sub-processes
 symfony/routing                    7.4.3   Maps an HTTP request to a set of configuration variables
 symfony/service-contracts          3.6.1   Generic abstractions related to writing services
-symfony/string                     7.4.0   Provides an object-oriented API to strings and deals with bytes, UTF-8 code points and grapheme clusters in...
+symfony/string                     7.4.0   Provides an object-oriented API to strings and deals with bytes, UTF-8 code points and grapheme clusters in a unifie...
 symfony/translation                7.4.3   Provides tools to internationalize your application
 symfony/translation-contracts      3.6.1   Generic abstractions related to translation
 symfony/uid                        7.4.0   Provides an object-oriented API to generate and represent UIDs
 symfony/var-dumper                 7.4.3   Provides mechanisms for walking through any arbitrary PHP variable
 symfony/yaml                       7.4.1   Loads and dumps YAML files
 theseer/tokenizer                  1.3.1   A small library for converting tokenized PHP source code into XML and potentially other formats
-tijsverkoyen/css-to-inline-styles  2.4.0   CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline...
+tijsverkoyen/css-to-inline-styles  2.4.0   CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. ...
 vlucas/phpdotenv                   5.6.3   Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.
 voku/portable-ascii                2.0.3   Portable ASCII library - performance optimized (ascii) string functions for php.
 ```
@@ -1628,55 +1635,55 @@ Laravel Framework 12.48.1
 
 ```
 
-  GET|HEAD        / ...................................................................................................................................... 
-  GET|HEAD        confirm-password ............................................................ password.confirm  Auth\ConfirmablePasswordController@show
-  POST            confirm-password .............................................................................. Auth\ConfirmablePasswordController@store
-  GET|HEAD        dashboard .............................................................................................. dashboard  DashboardController
-  POST            email/verification-notification ................................. verification.send  Auth\EmailVerificationNotificationController@store
-  GET|HEAD        f/{family}/bills ...................................................................... family.bills.index  FamilyBillsController@index
-  POST            f/{family}/bills ...................................................................... family.bills.store  FamilyBillsController@store
-  GET|HEAD        f/{family}/bills/create ............................................................. family.bills.create  FamilyBillsController@create
-  PUT             f/{family}/bills/{bill} ............................................................. family.bills.update  FamilyBillsController@update
-  DELETE          f/{family}/bills/{bill} ........................................................... family.bills.destroy  FamilyBillsController@destroy
-  GET|HEAD        f/{family}/bills/{bill}/edit ............................................................ family.bills.edit  FamilyBillsController@edit
-  POST            f/{family}/bills/{bill}/toggle-active ................................... family.bills.toggleActive  FamilyBillsController@toggleActive
-  GET|HEAD        f/{family}/dashboard ................................................................ family.dashboard  FamilyDashboardController@index
-  GET|HEAD        f/{family}/incomes ....................................................................... incomes.index  FamilyIncomesController@index
-  POST            f/{family}/incomes ....................................................................... incomes.store  FamilyIncomesController@store
-  PUT|PATCH       f/{family}/incomes/{income} ............................................................ incomes.update  FamilyIncomesController@update
-  DELETE          f/{family}/incomes/{income} .......................................................... incomes.destroy  FamilyIncomesController@destroy
-  GET|HEAD        f/{family}/members ................................................................ family.members.index  FamilyMembersController@index
-  POST            f/{family}/members ................................................................ family.members.store  FamilyMembersController@store
-  PUT             f/{family}/members/{member} ..................................................... family.members.update  FamilyMembersController@update
-  DELETE          f/{family}/members/{member} ................................................... family.members.destroy  FamilyMembersController@destroy
-  GET|HEAD        f/{family}/ping ........................................................................................................................ 
-  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag  FamilyPlanpagPageController
-  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
-  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
-  GET|HEAD        f/{family}/taxonomia ........................................................................ family.taxonomy  TaxonomyController@index
-  POST            families ....................................................................................... families.store  FamilyController@store
-  POST            families/{family}/activate ............................................................... families.activate  FamilyController@activate
-  GET|HEAD        forgot-password ............................................................. password.request  Auth\PasswordResetLinkController@create
-  POST            forgot-password ................................................................ password.email  Auth\PasswordResetLinkController@store
-  GET|HEAD        login ............................................................................... login  Auth\AuthenticatedSessionController@create
-  POST            login ........................................................................................ Auth\AuthenticatedSessionController@store
-  POST            logout ............................................................................ logout  Auth\AuthenticatedSessionController@destroy
-  PUT             password .............................................................................. password.update  Auth\PasswordController@update
-  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
-  GET|HEAD        profile .......................................................................................... profile.edit  ProfileController@edit
-  PATCH           profile ...................................................................................... profile.update  ProfileController@update
-  DELETE          profile .................................................................................... profile.destroy  ProfileController@destroy
-  GET|HEAD        register ............................................................................... register  Auth\RegisteredUserController@create
-  POST            register ........................................................................................... Auth\RegisteredUserController@store
-  POST            reset-password ....................................................................... password.store  Auth\NewPasswordController@store
-  GET|HEAD        reset-password/{token} .............................................................. password.reset  Auth\NewPasswordController@create
-  GET|HEAD        storage/{path} ........................................................................................................... storage.local
-  GET|HEAD        taxonomia ..................................................................................................... TaxonomyController@index
-  GET|HEAD        up ..................................................................................................................................... 
-  GET|HEAD        verify-email .............................................................. verification.notice  Auth\EmailVerificationPromptController
-  GET|HEAD        verify-email/{id}/{hash} .............................................................. verification.verify  Auth\VerifyEmailController
+  GET|HEAD        / ............................................................................................................................................... 
+  GET|HEAD        confirm-password ..................................................................... password.confirm  Auth\ConfirmablePasswordController@show
+  POST            confirm-password ....................................................................................... Auth\ConfirmablePasswordController@store
+  GET|HEAD        dashboard ....................................................................................................... dashboard  DashboardController
+  POST            email/verification-notification .......................................... verification.send  Auth\EmailVerificationNotificationController@store
+  GET|HEAD        f/{family}/bills ............................................................................... family.bills.index  FamilyBillsController@index
+  POST            f/{family}/bills ............................................................................... family.bills.store  FamilyBillsController@store
+  GET|HEAD        f/{family}/bills/create ...................................................................... family.bills.create  FamilyBillsController@create
+  PUT             f/{family}/bills/{bill} ...................................................................... family.bills.update  FamilyBillsController@update
+  DELETE          f/{family}/bills/{bill} .................................................................... family.bills.destroy  FamilyBillsController@destroy
+  GET|HEAD        f/{family}/bills/{bill}/edit ..................................................................... family.bills.edit  FamilyBillsController@edit
+  POST            f/{family}/bills/{bill}/toggle-active ............................................ family.bills.toggleActive  FamilyBillsController@toggleActive
+  GET|HEAD        f/{family}/dashboard ......................................................................... family.dashboard  FamilyDashboardController@index
+  GET|HEAD        f/{family}/incomes ................................................................................ incomes.index  FamilyIncomesController@index
+  POST            f/{family}/incomes ................................................................................ incomes.store  FamilyIncomesController@store
+  PUT|PATCH       f/{family}/incomes/{income} ..................................................................... incomes.update  FamilyIncomesController@update
+  DELETE          f/{family}/incomes/{income} ................................................................... incomes.destroy  FamilyIncomesController@destroy
+  GET|HEAD        f/{family}/members ......................................................................... family.members.index  FamilyMembersController@index
+  POST            f/{family}/members ......................................................................... family.members.store  FamilyMembersController@store
+  PUT             f/{family}/members/{member} .............................................................. family.members.update  FamilyMembersController@update
+  DELETE          f/{family}/members/{member} ............................................................ family.members.destroy  FamilyMembersController@destroy
+  GET|HEAD        f/{family}/ping ................................................................................................................................. 
+  GET|HEAD        f/{family}/planpag ................................................................................. family.planpag  FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ..................................... family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ............................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        f/{family}/taxonomia ................................................................................. family.taxonomy  TaxonomyController@index
+  POST            families ................................................................................................ families.store  FamilyController@store
+  POST            families/{family}/activate ........................................................................ families.activate  FamilyController@activate
+  GET|HEAD        forgot-password ...................................................................... password.request  Auth\PasswordResetLinkController@create
+  POST            forgot-password ......................................................................... password.email  Auth\PasswordResetLinkController@store
+  GET|HEAD        login ........................................................................................ login  Auth\AuthenticatedSessionController@create
+  POST            login ................................................................................................. Auth\AuthenticatedSessionController@store
+  POST            logout ..................................................................................... logout  Auth\AuthenticatedSessionController@destroy
+  PUT             password ....................................................................................... password.update  Auth\PasswordController@update
+  GET|HEAD        planpag ................................................................................................................. PlanpagController@index
+  GET|HEAD        profile ................................................................................................... profile.edit  ProfileController@edit
+  PATCH           profile ............................................................................................... profile.update  ProfileController@update
+  DELETE          profile ............................................................................................. profile.destroy  ProfileController@destroy
+  GET|HEAD        register ........................................................................................ register  Auth\RegisteredUserController@create
+  POST            register .................................................................................................... Auth\RegisteredUserController@store
+  POST            reset-password ................................................................................ password.store  Auth\NewPasswordController@store
+  GET|HEAD        reset-password/{token} ....................................................................... password.reset  Auth\NewPasswordController@create
+  GET|HEAD        storage/{path} .................................................................................................................... storage.local
+  GET|HEAD        taxonomia .............................................................................................................. TaxonomyController@index
+  GET|HEAD        up .............................................................................................................................................. 
+  GET|HEAD        verify-email ....................................................................... verification.notice  Auth\EmailVerificationPromptController
+  GET|HEAD        verify-email/{id}/{hash} ....................................................................... verification.verify  Auth\VerifyEmailController
 
-                                                                                                                                       Showing [47] routes
+                                                                                                                                                Showing [47] routes
 
 ```
 
@@ -1785,7 +1792,7 @@ Laravel Framework 12.48.1
 ## Key files (fingerprints)
 
 - `routes/web.php` SHA1: `65a02c788509ded20b954db4fb246e111c1b6842`
-- `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `ba9e67bbc0b46993d9f805ccaf828facb224f9e0`
+- `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `08c091cf41c3662daf8b723c6fa2ae367426eb1c`
 - `resources/views/family/planpag.blade.php` SHA1: `210b29676169247478ea186304637bb6bd04d2ad`
 - `tests/Feature/PlanpagUiPageTest.php` SHA1: `55d97d8a3b5ce9f0a0b84e29f56d9062ab46bfd6`
 - `.githooks/pre-commit` SHA1: `f6d651ab801d828b969e53130886ccac08072177`
@@ -1920,90 +1927,89 @@ Laravel Framework 12.48.1
 
 ### Latest routes_full output
 
-- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\routes_full_20260213_165120.txt`
+- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\routes_full_20260213_183640.txt`
 
 ```
 
-  GET|HEAD        / ...................................................................................................................................... 
-  GET|HEAD        confirm-password ............................................................ password.confirm  Auth\ConfirmablePasswordController@show
-  POST            confirm-password .............................................................................. Auth\ConfirmablePasswordController@store
-  GET|HEAD        dashboard .............................................................................................. dashboard  DashboardController
-  POST            email/verification-notification ................................. verification.send  Auth\EmailVerificationNotificationController@store
-  GET|HEAD        f/{family}/bills ...................................................................... family.bills.index  FamilyBillsController@index
-  POST            f/{family}/bills ...................................................................... family.bills.store  FamilyBillsController@store
-  GET|HEAD        f/{family}/bills/create ............................................................. family.bills.create  FamilyBillsController@create
-  PUT             f/{family}/bills/{bill} ............................................................. family.bills.update  FamilyBillsController@update
-  DELETE          f/{family}/bills/{bill} ........................................................... family.bills.destroy  FamilyBillsController@destroy
-  GET|HEAD        f/{family}/bills/{bill}/edit ............................................................ family.bills.edit  FamilyBillsController@edit
-  POST            f/{family}/bills/{bill}/toggle-active ................................... family.bills.toggleActive  FamilyBillsController@toggleActive
-  GET|HEAD        f/{family}/dashboard ................................................................ family.dashboard  FamilyDashboardController@index
-  GET|HEAD        f/{family}/incomes ....................................................................... incomes.index  FamilyIncomesController@index
-  POST            f/{family}/incomes ....................................................................... incomes.store  FamilyIncomesController@store
-  PUT|PATCH       f/{family}/incomes/{income} ............................................................ incomes.update  FamilyIncomesController@update
-  DELETE          f/{family}/incomes/{income} .......................................................... incomes.destroy  FamilyIncomesController@destroy
-  GET|HEAD        f/{family}/members ................................................................ family.members.index  FamilyMembersController@index
-  POST            f/{family}/members ................................................................ family.members.store  FamilyMembersController@store
-  PUT             f/{family}/members/{member} ..................................................... family.members.update  FamilyMembersController@update
-  DELETE          f/{family}/members/{member} ................................................... family.members.destroy  FamilyMembersController@destroy
-  GET|HEAD        f/{family}/ping ........................................................................................................................ 
-  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag  FamilyPlanpagPageController
-  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
-  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
-  GET|HEAD        f/{family}/taxonomia ........................................................................ family.taxonomy  TaxonomyController@index
-  POST            families ....................................................................................... families.store  FamilyController@store
-  POST            families/{family}/activate ............................................................... families.activate  FamilyController@activate
-  GET|HEAD        forgot-password ............................................................. password.request  Auth\PasswordResetLinkController@create
-  POST            forgot-password ................................................................ password.email  Auth\PasswordResetLinkController@store
-  GET|HEAD        login ............................................................................... login  Auth\AuthenticatedSessionController@create
-  POST            login ........................................................................................ Auth\AuthenticatedSessionController@store
-  POST            logout ............................................................................ logout  Auth\AuthenticatedSessionController@destroy
-  PUT             password .............................................................................. password.update  Auth\PasswordController@update
-  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
-  GET|HEAD        profile .......................................................................................... profile.edit  ProfileController@edit
-  PATCH           profile ...................................................................................... profile.update  ProfileController@update
-  DELETE          profile .................................................................................... profile.destroy  ProfileController@destroy
-  GET|HEAD        register ............................................................................... register  Auth\RegisteredUserController@create
-  POST            register ........................................................................................... Auth\RegisteredUserController@store
-  POST            reset-password ....................................................................... password.store  Auth\NewPasswordController@store
-  GET|HEAD        reset-password/{token} .............................................................. password.reset  Auth\NewPasswordController@create
-  GET|HEAD        storage/{path} ........................................................................................................... storage.local
-  GET|HEAD        taxonomia ..................................................................................................... TaxonomyController@index
-  GET|HEAD        up ..................................................................................................................................... 
-  GET|HEAD        verify-email .............................................................. verification.notice  Auth\EmailVerificationPromptController
-  GET|HEAD        verify-email/{id}/{hash} .............................................................. verification.verify  Auth\VerifyEmailController
+  GET|HEAD        / ............................................................................................................................................... 
+  GET|HEAD        confirm-password ..................................................................... password.confirm  Auth\ConfirmablePasswordController@show
+  POST            confirm-password ....................................................................................... Auth\ConfirmablePasswordController@store
+  GET|HEAD        dashboard ....................................................................................................... dashboard  DashboardController
+  POST            email/verification-notification .......................................... verification.send  Auth\EmailVerificationNotificationController@store
+  GET|HEAD        f/{family}/bills ............................................................................... family.bills.index  FamilyBillsController@index
+  POST            f/{family}/bills ............................................................................... family.bills.store  FamilyBillsController@store
+  GET|HEAD        f/{family}/bills/create ...................................................................... family.bills.create  FamilyBillsController@create
+  PUT             f/{family}/bills/{bill} ...................................................................... family.bills.update  FamilyBillsController@update
+  DELETE          f/{family}/bills/{bill} .................................................................... family.bills.destroy  FamilyBillsController@destroy
+  GET|HEAD        f/{family}/bills/{bill}/edit ..................................................................... family.bills.edit  FamilyBillsController@edit
+  POST            f/{family}/bills/{bill}/toggle-active ............................................ family.bills.toggleActive  FamilyBillsController@toggleActive
+  GET|HEAD        f/{family}/dashboard ......................................................................... family.dashboard  FamilyDashboardController@index
+  GET|HEAD        f/{family}/incomes ................................................................................ incomes.index  FamilyIncomesController@index
+  POST            f/{family}/incomes ................................................................................ incomes.store  FamilyIncomesController@store
+  PUT|PATCH       f/{family}/incomes/{income} ..................................................................... incomes.update  FamilyIncomesController@update
+  DELETE          f/{family}/incomes/{income} ................................................................... incomes.destroy  FamilyIncomesController@destroy
+  GET|HEAD        f/{family}/members ......................................................................... family.members.index  FamilyMembersController@index
+  POST            f/{family}/members ......................................................................... family.members.store  FamilyMembersController@store
+  PUT             f/{family}/members/{member} .............................................................. family.members.update  FamilyMembersController@update
+  DELETE          f/{family}/members/{member} ............................................................ family.members.destroy  FamilyMembersController@destroy
+  GET|HEAD        f/{family}/ping ................................................................................................................................. 
+  GET|HEAD        f/{family}/planpag ................................................................................. family.planpag  FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ..................................... family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ............................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        f/{family}/taxonomia ................................................................................. family.taxonomy  TaxonomyController@index
+  POST            families ................................................................................................ families.store  FamilyController@store
+  POST            families/{family}/activate ........................................................................ families.activate  FamilyController@activate
+  GET|HEAD        forgot-password ...................................................................... password.request  Auth\PasswordResetLinkController@create
+  POST            forgot-password ......................................................................... password.email  Auth\PasswordResetLinkController@store
+  GET|HEAD        login ........................................................................................ login  Auth\AuthenticatedSessionController@create
+  POST            login ................................................................................................. Auth\AuthenticatedSessionController@store
+  POST            logout ..................................................................................... logout  Auth\AuthenticatedSessionController@destroy
+  PUT             password ....................................................................................... password.update  Auth\PasswordController@update
+  GET|HEAD        planpag ................................................................................................................. PlanpagController@index
+  GET|HEAD        profile ................................................................................................... profile.edit  ProfileController@edit
+  PATCH           profile ............................................................................................... profile.update  ProfileController@update
+  DELETE          profile ............................................................................................. profile.destroy  ProfileController@destroy
+  GET|HEAD        register ........................................................................................ register  Auth\RegisteredUserController@create
+  POST            register .................................................................................................... Auth\RegisteredUserController@store
+  POST            reset-password ................................................................................ password.store  Auth\NewPasswordController@store
+  GET|HEAD        reset-password/{token} ....................................................................... password.reset  Auth\NewPasswordController@create
+  GET|HEAD        storage/{path} .................................................................................................................... storage.local
+  GET|HEAD        taxonomia .............................................................................................................. TaxonomyController@index
+  GET|HEAD        up .............................................................................................................................................. 
+  GET|HEAD        verify-email ....................................................................... verification.notice  Auth\EmailVerificationPromptController
+  GET|HEAD        verify-email/{id}/{hash} ....................................................................... verification.verify  Auth\VerifyEmailController
 
-                                                                                                                                       Showing [47] routes
+                                                                                                                                                Showing [47] routes
 
 ```
 
 ### Latest timestamp snapshot (short)
 
-- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\snapshot_20260213_165119.md`
+- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\snapshot_20260213_183640.md`
 
 ```
 # FamilyFin Snapshot
 
-- Generated at: `2026-02-13T16:51:20.0672920-03:00`
+- Generated at: `2026-02-13T18:36:40.2756694-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
-- Branch: `feat/rbac-family-members-policy`
-- HEAD: `6659fe2`
-- Upstream: `none`
+- Branch: `main`
+- HEAD: `d8e4164`
+- Upstream: `origin/main`
 
 ### Status
 
 ```
-## feat/rbac-family-members-policy
- M docs/snapshots/SNAPSHOT_FULL.md
- M docs/snapshots/SNAPSHOT_LATEST.md
+## main...origin/main
 ```
 
 ### Last 15 commits
 
 ```
-6659fe2 RBAC: add FamilyMemberPolicy and authorize family members
+d8e4164 RBAC: authorize bills and planpag via policies (#44)
+40e2265 Feat/rbac family members policy (#43)
 2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
 47bf31e Update snapshots (LATEST + FULL) (#41)
 0f6123b Add family members management (roles + UI) (#40)
@@ -2017,15 +2023,12 @@ c11536f Update snapshots (#32)
 53bafd8 Track snapshot docs (LATEST + FULL) (#31)
 a537808 Add incomes feature (tenancy scoped) + IncomeFlowTest (#30)
 a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#29)
-4e52acd chore(docs): add snapshot system (latest + full) (#28)
 ```
 
 ### Diff stat (working tree)
 
 ```
- docs/snapshots/SNAPSHOT_FULL.md   | 1408 +++++++++++++++++++------------------
- docs/snapshots/SNAPSHOT_LATEST.md |   26 +-
- 2 files changed, 724 insertions(+), 710 deletions(-)
+(no output)
 ```
 
 ## Local main protection (githooks)
@@ -2061,9 +2064,9 @@ Zend Engine v4.2.12, Copyright (c) Zend Technologies
 ### Composer version
 
 ```
-[32mComposer[39m version [33m2.8.12[39m 2025-09-19 13:41:59
 [32mPHP[39m version [33m8.2.12[39m (C:\.xampp\php\php.exe)
 Run the "diagnose" command to get more detailed diagnostics output.
+[32mComposer[39m version [33m2.8.12[39m 2025-09-19 13:41:59
 ```
 
 ### Laravel / Artisan version
@@ -2093,7 +2096,7 @@ MAIL_MAILER=***REDACTED***
 ## Key project files (fingerprints)
 
 - `routes/web.php` SHA1: `65a02c788509ded20b954db4fb246e111c1b6842`
-- `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `ba9e67bbc0b46993d9f805ccaf828facb224f9e0`
+- `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `08c091cf41c3662daf8b723c6fa2ae367426eb1c`
 - `resources/views/family/planpag.blade.php` SHA1: `210b29676169247478ea186304637bb6bd04d2ad`
 - `tests/Feature/PlanpagUiPageTest.php` SHA1: `55d97d8a3b5ce9f0a0b84e29f56d9062ab46bfd6`
 - `.githooks/pre-commit` SHA1: `f6d651ab801d828b969e53130886ccac08072177`
@@ -2123,15 +2126,15 @@ MAIL_MAILER=***REDACTED***
 ### PlanPag routes (filtered from route:list)
 
 ```
-  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag  FamilyPlanpagPageController
-  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
-  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
-  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
+  GET|HEAD        f/{family}/planpag ................................................................................. family.planpag  FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ..................................... family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ............................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        planpag ................................................................................................................. PlanpagController@index
 ```
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260213_165120.txt`
+- Saved to: `docs\snapshots\routes_full_20260213_183640.txt`
 
 ## Notes
 
