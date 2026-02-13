@@ -1,23 +1,29 @@
 ﻿# FamilyFin Snapshot
 
-- Generated at: `2026-02-13T18:36:40.2756694-03:00`
+- Generated at: `2026-02-13T20:04:44.1768806-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
-- Branch: `main`
-- HEAD: `d8e4164`
-- Upstream: `origin/main`
+- Branch: `chore/snapshot-update-20260213-200443`
+- HEAD: `6d29ebe`
+- Upstream: `none`
 
 ### Status
 
 ```
-## main...origin/main
+## chore/snapshot-update-20260213-200443
+ M docs/snapshots/SNAPSHOT_FULL.md
+ M docs/snapshots/SNAPSHOT_LATEST.md
 ```
 
 ### Last 15 commits
 
 ```
+6d29ebe Feat/rbac budget routes (#48)
+3d8965c Fix: normalize budget entry competence to month start (#47)
+29788e0 RBAC: authorize taxonomy via policy (#46)
+452fd33 Update snapshots (#45)
 d8e4164 RBAC: authorize bills and planpag via policies (#44)
 40e2265 Feat/rbac family members policy (#43)
 2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
@@ -29,16 +35,14 @@ d8e4164 RBAC: authorize bills and planpag via policies (#44)
 b029d8d Add IncomePolicy (tenancy) + auto snapshot post-commit hook (#35)
 aafacd8 Improve incomes UI (table, edit, delete, totals) (#34)
 23db586 Add Receitas link to family navigation (#33)
-c11536f Update snapshots (#32)
-53bafd8 Track snapshot docs (LATEST + FULL) (#31)
-a537808 Add incomes feature (tenancy scoped) + IncomeFlowTest (#30)
-a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#29)
 ```
 
 ### Diff stat (working tree)
 
 ```
-(no output)
+ docs/snapshots/SNAPSHOT_FULL.md   | 169 +++++++++++++++++++++++---------------
+ docs/snapshots/SNAPSHOT_LATEST.md |  46 +++++------
+ 2 files changed, 127 insertions(+), 88 deletions(-)
 ```
 
 ## Local main protection (githooks)
@@ -69,9 +73,9 @@ Zend Engine v4.2.12, Copyright (c) Zend Technologies
 ### Composer version
 
 ```
+[32mComposer[39m version [33m2.8.12[39m 2025-09-19 13:41:59
 [32mPHP[39m version [33m8.2.12[39m (C:\.xampp\php\php.exe)
 Run the "diagnose" command to get more detailed diagnostics output.
-[32mComposer[39m version [33m2.8.12[39m 2025-09-19 13:41:59
 ```
 
 ### Laravel / Artisan version
@@ -100,7 +104,7 @@ MAIL_MAILER=***REDACTED***
 
 ## Key project files (fingerprints)
 
-- `routes/web.php` SHA1: `65a02c788509ded20b954db4fb246e111c1b6842`
+- `routes/web.php` SHA1: `337260b3c9984ffdca427291201c9e1b4bbabf56`
 - `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `08c091cf41c3662daf8b723c6fa2ae367426eb1c`
 - `resources/views/family/planpag.blade.php` SHA1: `210b29676169247478ea186304637bb6bd04d2ad`
 - `tests/Feature/PlanpagUiPageTest.php` SHA1: `55d97d8a3b5ce9f0a0b84e29f56d9062ab46bfd6`
@@ -112,18 +116,18 @@ MAIL_MAILER=***REDACTED***
 ### Matches in routes/web.php
 
 ```
-8: use App\Http\Controllers\FamilyPlanpagPageController;
-9: use App\Http\Controllers\FamilyPlanpagActionsController;
-11: use App\Http\Controllers\PlanpagController;
-35: Route::get('/planpag', [PlanpagController::class, 'index']);
-90:             // PlanPag UI
-91:             Route::get('/planpag', FamilyPlanpagPageController::class)
-92:                 ->name('family.planpag');
-94:             // PlanPag actions
-95:             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
-96:                 ->name('family.planpag.markPaid');
-98:             Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
-99:                 ->name('family.planpag.unmarkPaid');
+11: use App\Http\Controllers\FamilyPlanpagPageController;
+12: use App\Http\Controllers\FamilyPlanpagActionsController;
+13: use App\Http\Controllers\PlanpagController;
+44: Route::get('/planpag', [PlanpagController::class, 'index']);
+102:             | PlanPag UI
+105:             Route::get('/planpag', FamilyPlanpagPageController::class)
+106:                 ->name('family.planpag');
+110:             | PlanPag actions
+113:             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
+114:                 ->name('family.planpag.markPaid');
+116:             Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
+117:                 ->name('family.planpag.unmarkPaid');
 ```
 
 ## Routes
@@ -131,15 +135,15 @@ MAIL_MAILER=***REDACTED***
 ### PlanPag routes (filtered from route:list)
 
 ```
-  GET|HEAD        f/{family}/planpag ................................................................................. family.planpag › FamilyPlanpagPageController
-  POST            f/{family}/planpag/{occurrence}/mark-paid ..................................... family.planpag.markPaid › FamilyPlanpagActionsController@markPaid
-  POST            f/{family}/planpag/{occurrence}/unmark-paid ............................... family.planpag.unmarkPaid › FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        f/{family}/planpag ................................................................................. family.planpag ÔÇ║ FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ..................................... family.planpag.markPaid ÔÇ║ FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ............................... family.planpag.unmarkPaid ÔÇ║ FamilyPlanpagActionsController@unmarkPaid
   GET|HEAD        planpag ................................................................................................................. PlanpagController@index
 ```
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260213_183640.txt`
+- Saved to: `docs\snapshots\routes_full_20260213_200444.txt`
 
 ## Notes
 

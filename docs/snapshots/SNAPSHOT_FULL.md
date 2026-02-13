@@ -1,10 +1,10 @@
 ﻿# FamilyFin FULL Snapshot (maximal, safe-redacted)
 
-- Generated at: `2026-02-13T18:36:41.5337206-03:00`
+- Generated at: `2026-02-13T20:04:45.3978903-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
-- Branch: `main`
-- HEAD: `d8e4164`
-- Upstream: `origin/main`
+- Branch: `chore/snapshot-update-20260213-200443`
+- HEAD: `6d29ebe`
+- Upstream: `none`
 - Safety: secrets redacted = ON
 
 
@@ -21,13 +21,18 @@ origin	https://github.com/RanielMattos/familyfin.git (push)
 ### Status
 
 ```
-## main...origin/main
+## chore/snapshot-update-20260213-200443
+ M docs/snapshots/SNAPSHOT_FULL.md
  M docs/snapshots/SNAPSHOT_LATEST.md
 ```
 
 ### Last 50 commits
 
 ```
+6d29ebe Feat/rbac budget routes (#48)
+3d8965c Fix: normalize budget entry competence to month start (#47)
+29788e0 RBAC: authorize taxonomy via policy (#46)
+452fd33 Update snapshots (#45)
 d8e4164 RBAC: authorize bills and planpag via policies (#44)
 40e2265 Feat/rbac family members policy (#43)
 2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
@@ -74,10 +79,6 @@ fff2609 docs: add ci badge
 9ead7fc ci: add github actions workflow
 6c99ef4 chore: normalize line endings
 0d89ba0 docs: add project README
-dbbacb6 chore: add root healthcheck route
-6b9da56 feat: add planpag core and endpoint
-7193e81 feat: add scenarios and budget core
-e68a8a2 feat: add taxonomy seed and endpoint
 ```
 
 ### First commit + total commits
@@ -86,7 +87,7 @@ e68a8a2 feat: add taxonomy seed and endpoint
 bb9dcf95527951ee44f43c6fe046a99bda125b42
 ```
 ```
-52
+56
 ```
 
 ## Git - Deep
@@ -95,25 +96,10 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 ### Branches (local + remote)
 
 ```
-  chore/guard-main
-  chore/snapshot-update
-  feat/rbac-bills-planpag
-  feat/rbac-roles
-  fix/incomes-policy
-  fix/incomes-tenancy
-* main
+* chore/snapshot-update-20260213-200443
+  main
   remotes/origin/HEAD -> origin/main
   remotes/origin/RanielMattos-patch-1
-  remotes/origin/chore/snapshot-update
-  remotes/origin/chore/track-snapshots
-  remotes/origin/feat/incomes-ui
-  remotes/origin/feat/menu-receitas
-  remotes/origin/feat/rbac-bills-planpag
-  remotes/origin/feat/rbac-family-members-policy
-  remotes/origin/feat/rbac-roles
-  remotes/origin/fix/incomes-policy
-  remotes/origin/fix/incomes-scope-bindings
-  remotes/origin/fix/incomes-tenancy
   remotes/origin/main
   remotes/origin/revert-35-fix/incomes-policy
 ```
@@ -127,7 +113,7 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 ### Describe
 
 ```
-d8e4164-dirty
+6d29ebe-dirty
 ```
 
 ### Submodules
@@ -139,8 +125,9 @@ d8e4164-dirty
 ### Working tree diff stat
 
 ```
- docs/snapshots/SNAPSHOT_LATEST.md | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ docs/snapshots/SNAPSHOT_FULL.md   | 169 +++++++++++++++++++++++---------------
+ docs/snapshots/SNAPSHOT_LATEST.md |  60 +++++++-------
+ 2 files changed, 136 insertions(+), 93 deletions(-)
 ```
 
 ### Tracked files (paths)
@@ -170,12 +157,15 @@ app/Http/Controllers/Auth/VerifyEmailController.php
 app/Http/Controllers/Controller.php
 app/Http/Controllers/DashboardController.php
 app/Http/Controllers/FamilyBillsController.php
+app/Http/Controllers/FamilyBudgetEntriesController.php
+app/Http/Controllers/FamilyBudgetLinesController.php
 app/Http/Controllers/FamilyController.php
 app/Http/Controllers/FamilyDashboardController.php
 app/Http/Controllers/FamilyIncomesController.php
 app/Http/Controllers/FamilyMembersController.php
 app/Http/Controllers/FamilyPlanpagActionsController.php
 app/Http/Controllers/FamilyPlanpagPageController.php
+app/Http/Controllers/FamilyScenariosController.php
 app/Http/Controllers/PlanpagController.php
 app/Http/Controllers/ProfileController.php
 app/Http/Controllers/TaxonomyController.php
@@ -196,8 +186,12 @@ app/Models/TaxonomyNode.php
 app/Models/User.php
 app/Policies/BillOccurrencePolicy.php
 app/Policies/BillPolicy.php
+app/Policies/BudgetEntryPolicy.php
+app/Policies/BudgetLinePolicy.php
 app/Policies/FamilyMemberPolicy.php
 app/Policies/IncomePolicy.php
+app/Policies/ScenarioPolicy.php
+app/Policies/TaxonomyNodePolicy.php
 app/Providers/AppServiceProvider.php
 app/Services/BillOccurrenceGenerator.php
 app/Services/FamilyActivationService.php
@@ -319,6 +313,7 @@ tests/Feature/BillOccurrenceGeneratorTest.php
 tests/Feature/BillPaymentFlowTest.php
 tests/Feature/BillsUiFlowTest.php
 tests/Feature/BudgetBasicsTest.php
+tests/Feature/BudgetRoutesFlowTest.php
 tests/Feature/EnterActivatesFamilyTest.php
 tests/Feature/ExampleTest.php
 tests/Feature/FamilyAccessMiddlewareTest.php
@@ -362,15 +357,18 @@ vite.config.js
 100644 blob bd3e17ed1c3add3d68702e689a75dace1e0e3023     308	app/Http/Controllers/Controller.php
 100644 blob 2e8760627bd26f15d9b06cf6b87a3eb8b3593062     705	app/Http/Controllers/DashboardController.php
 100644 blob d02fefdf5f9eb574ae495d9ee2b5455e85542330    4723	app/Http/Controllers/FamilyBillsController.php
+100644 blob ed1bf89ea57a27744b9948a548dcb42a2b6072b6    4335	app/Http/Controllers/FamilyBudgetEntriesController.php
+100644 blob 578fd3830abe9b481320b3b9923e1c2aea88fcdd    8326	app/Http/Controllers/FamilyBudgetLinesController.php
 100644 blob ef21fa10d11da34aff610e460dbdb523628e9448    1291	app/Http/Controllers/FamilyController.php
 100644 blob 97bde3e468fd84632c4a05f73fc820f7c17d7021     485	app/Http/Controllers/FamilyDashboardController.php
 100644 blob fe4eca3a82bcc7efdefc7ef54137fe21822693aa    2235	app/Http/Controllers/FamilyIncomesController.php
 100644 blob ec354c233b9772347d020b8e9611799a0f869bb0    5547	app/Http/Controllers/FamilyMembersController.php
 100644 blob bd156504f441086e0950e17f4f33ef007d58dc49    4477	app/Http/Controllers/FamilyPlanpagActionsController.php
 100644 blob b83eddb276dd328abf6850664e6c70d8f08cfc64    1006	app/Http/Controllers/FamilyPlanpagPageController.php
+100644 blob ee35fd4a42855614acd06399060324d9b5498aad    4415	app/Http/Controllers/FamilyScenariosController.php
 100644 blob 3427a887acd356384dccd154b470c55dde735628    3288	app/Http/Controllers/PlanpagController.php
 100644 blob a48eb8d829dc3b348d094c108fcda9219c5c4ee7    1416	app/Http/Controllers/ProfileController.php
-100644 blob efca4faddbb0f27ae3e52e13e835112e296f909c    1784	app/Http/Controllers/TaxonomyController.php
+100644 blob 7863ad121800264d3598e4309bb491eeebef4ea6    2310	app/Http/Controllers/TaxonomyController.php
 100644 blob 5bd0adae13ec6f43a2d4ab473d6b91842357cb46    1214	app/Http/Middleware/AutoActivateFamily.php
 100644 blob 4c65219710a6866bdb01dfc659d9449830b59f54    1272	app/Http/Middleware/EnsureFamilyAccess.php
 100644 blob 25746424580a1206e6995f034ecbf8b9cc7cd607    2233	app/Http/Requests/Auth/LoginRequest.php
@@ -378,7 +376,7 @@ vite.config.js
 100644 blob aab03ec7fcea0918eacb519c57366c85716ae15d     481	app/Http/Requests/StoreBillRequest.php
 100644 blob 6f1308d1566446436191eab9010ee885a49b4607    2074	app/Models/Bill.php
 100644 blob 5697478045f05e0ae1577fecf8eda1a2a9934138    1083	app/Models/BillOccurrence.php
-100644 blob 3695535435524cc937ab9c071793f2e569c3a988     629	app/Models/BudgetEntry.php
+100644 blob 8639dc5172f2f2461d87503ef4358e3158ceacad     943	app/Models/BudgetEntry.php
 100644 blob 034708c0375cbc02160da41613b14e7c986a12f8    1818	app/Models/BudgetLine.php
 100644 blob 91cb51708b0825907b3e8b89371ce4547b6d56e2    1052	app/Models/Family.php
 100644 blob a52c0ce2c20a055f9c454deb797ee21c7c57c520     982	app/Models/FamilyMember.php
@@ -388,8 +386,12 @@ vite.config.js
 100644 blob 6baa3966928694de19f57396816838536592bbcd    2223	app/Models/User.php
 100644 blob 9a1c22d8731e407b9c90bfba819b61eac916446c     650	app/Policies/BillOccurrencePolicy.php
 100644 blob 25dd7ac1532d255ad4177f7fa85981ca4eaeecc6     833	app/Policies/BillPolicy.php
+100644 blob 0af3405fd759675949fa08a7f3f39d94c532eee0     782	app/Policies/BudgetEntryPolicy.php
+100644 blob 77bf432ff10326b2b63bc7e9ed655a9899dc7cf3    1108	app/Policies/BudgetLinePolicy.php
 100644 blob 0dda4f81a2fd97693ec2b4c3508446befe75ea01    1217	app/Policies/FamilyMemberPolicy.php
 100644 blob 22df510fd159fc92eba951b079a7d2a184af8cf7    1954	app/Policies/IncomePolicy.php
+100644 blob ae93d15c8789bf67a2c34278a2209cc83a11d170    1094	app/Policies/ScenarioPolicy.php
+100644 blob 4654be06fc8e68ba680d173f73cc2af72ae58a0a     468	app/Policies/TaxonomyNodePolicy.php
 100644 blob 452e6b65b7a18aa7c3aaf886fd183a002d381e34     361	app/Providers/AppServiceProvider.php
 100644 blob 5ee701201188bf6a94331e8d32c3a994d854666a    6965	app/Services/BillOccurrenceGenerator.php
 100644 blob fb7436eb5c4189223ec018fff1feeacfc6db3cd4    1318	app/Services/FamilyActivationService.php
@@ -442,8 +444,8 @@ vite.config.js
 100644 blob a3ac0624cb685cbe224755406bc8a8f9ee0bcccf     267	database/seeders/IncomeSeeder.php
 100644 blob d4c9573890792cf7a479219db3bb318950f6ffd0    6229	database/seeders/TaxonomySeeder.php
 100644 blob 6ec5420b491b5756ffc04685773ee76173695138     497	docs/SETUP_BREEZE.md
-100644 blob 614d90a2b8c91a0328ede78d4934990d9401cf1d  152987	docs/snapshots/SNAPSHOT_FULL.md
-100644 blob f642b53b8898bdfda003861170621e1a3efdaa81    5080	docs/snapshots/SNAPSHOT_LATEST.md
+100644 blob 5a047ce7a5a52faaf862fbfaa47689cc3dcf7994  153916	docs/snapshots/SNAPSHOT_FULL.md
+100644 blob cc0bb0ac31614fb0ab7698f66f648da60330dde9    4806	docs/snapshots/SNAPSHOT_LATEST.md
 100644 blob 84a34298c20446cf7f5c8a2ca68ef47b3164409e  136510	package-lock.json
 100644 blob 2ea7e1db406eda18cf430972ec87ac24d7d3499f     549	package.json
 100644 blob d703241533c7f007d11c7f25ea7772f0155fadb8    1284	phpunit.xml
@@ -493,7 +495,7 @@ vite.config.js
 100644 blob b7355d72a12820cc4663a607ebf567d4db057704   82568	resources/views/welcome.blade.php
 100644 blob 3926ecf72a8b0ceb1d796215be602d6b6accf846    2360	routes/auth.php
 100644 blob 3c9adf1af8430da566d123514630bcc30c9c1345     210	routes/console.php
-100644 blob 49e4e139d337a96b0b2b66a22a819eddd15c2c43    6158	routes/web.php
+100644 blob b1ca29afec33549740b0548070d65dd1b6ca410f   10567	routes/web.php
 100644 blob fedb287fece8049b6bd243804b133e3af7a43f4c      33	storage/app/.gitignore
 100644 blob d6b7ef32c8478a48c3994dcadc86837f4371184d      14	storage/app/private/.gitignore
 100644 blob d6b7ef32c8478a48c3994dcadc86837f4371184d      14	storage/app/public/.gitignore
@@ -511,6 +513,7 @@ vite.config.js
 100644 blob d1035540053bfc7c7523754538c49ac23013be02    1462	tests/Feature/BillPaymentFlowTest.php
 100644 blob 7d56bc0b880061aa93c8baeb6b8242a492b71980    5825	tests/Feature/BillsUiFlowTest.php
 100644 blob f0a34d7892f60944fc03ecb99fed63b370a67941    2350	tests/Feature/BudgetBasicsTest.php
+100644 blob 2f62b22a79d4bd779e17c64bf2d57b9df1e481bb    4006	tests/Feature/BudgetRoutesFlowTest.php
 100644 blob 3c0915da9a4d4246cd02c2ded0c8c89fc7171f2a    1419	tests/Feature/EnterActivatesFamilyTest.php
 100644 blob 8364a84e2b7eea9f007e99a5d3333273fe30bf8a     359	tests/Feature/ExampleTest.php
 100644 blob 022f217de6e78e911a2b06192a853434a3d3d1ad    1229	tests/Feature/FamilyAccessMiddlewareTest.php
@@ -530,7 +533,7 @@ vite.config.js
 ### Shortlog (authors)
 
 ```
-    52	RanielMattos
+    56	RanielMattos
 ```
 
 ### Full history (reverse, detailed)
@@ -691,8 +694,20 @@ RBAC: add family role helpers and authorize incomes via policies (#42)
 40e2265 | 2026-02-13 16:53:51 -0300 | RanielMattos | 
 Feat/rbac family members policy (#43)
 
-d8e4164 | 2026-02-13 18:35:31 -0300 | RanielMattos |  (HEAD -> main, origin/main, origin/HEAD)
+d8e4164 | 2026-02-13 18:35:31 -0300 | RanielMattos | 
 RBAC: authorize bills and planpag via policies (#44)
+
+452fd33 | 2026-02-13 18:46:47 -0300 | RanielMattos | 
+Update snapshots (#45)
+
+29788e0 | 2026-02-13 19:11:04 -0300 | RanielMattos | 
+RBAC: authorize taxonomy via policy (#46)
+
+3d8965c | 2026-02-13 19:48:06 -0300 | RanielMattos | 
+Fix: normalize budget entry competence to month start (#47)
+
+6d29ebe | 2026-02-13 19:58:45 -0300 | RanielMattos |  (HEAD -> chore/snapshot-update-20260213-200443, origin/main, origin/HEAD, main)
+Feat/rbac budget routes (#48)
 ```
 
 ## Hooks (local main guard)
@@ -1660,6 +1675,17 @@ Laravel Framework 12.48.1
   GET|HEAD        f/{family}/planpag ................................................................................. family.planpag  FamilyPlanpagPageController
   POST            f/{family}/planpag/{occurrence}/mark-paid ..................................... family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
   POST            f/{family}/planpag/{occurrence}/unmark-paid ............................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        f/{family}/scenarios ................................................................... family.scenarios.index  FamilyScenariosController@index
+  POST            f/{family}/scenarios ................................................................... family.scenarios.store  FamilyScenariosController@store
+  PUT             f/{family}/scenarios/{scenario} ...................................................... family.scenarios.update  FamilyScenariosController@update
+  DELETE          f/{family}/scenarios/{scenario} .................................................... family.scenarios.destroy  FamilyScenariosController@destroy
+  GET|HEAD        f/{family}/scenarios/{scenario}/budget-lines ...................................... family.budget.lines.index  FamilyBudgetLinesController@index
+  POST            f/{family}/scenarios/{scenario}/budget-lines ...................................... family.budget.lines.store  FamilyBudgetLinesController@store
+  PUT             f/{family}/scenarios/{scenario}/budget-lines/{line} ............................. family.budget.lines.update  FamilyBudgetLinesController@update
+  DELETE          f/{family}/scenarios/{scenario}/budget-lines/{line} ........................... family.budget.lines.destroy  FamilyBudgetLinesController@destroy
+  POST            f/{family}/scenarios/{scenario}/budget-lines/{line}/entries ................... family.budget.entries.store  FamilyBudgetEntriesController@store
+  DELETE          f/{family}/scenarios/{scenario}/budget-lines/{line}/entries/{entry} ....... family.budget.entries.destroy  FamilyBudgetEntriesController@destroy
+  POST            f/{family}/scenarios/{scenario}/budget-lines/{line}/toggle-active ... family.budget.lines.toggleActive  FamilyBudgetLinesController@toggleActive
   GET|HEAD        f/{family}/taxonomia ................................................................................. family.taxonomy  TaxonomyController@index
   POST            families ................................................................................................ families.store  FamilyController@store
   POST            families/{family}/activate ........................................................................ families.activate  FamilyController@activate
@@ -1683,7 +1709,7 @@ Laravel Framework 12.48.1
   GET|HEAD        verify-email ....................................................................... verification.notice  Auth\EmailVerificationPromptController
   GET|HEAD        verify-email/{id}/{hash} ....................................................................... verification.verify  Auth\VerifyEmailController
 
-                                                                                                                                                Showing [47] routes
+                                                                                                                                                Showing [58] routes
 
 ```
 
@@ -1791,7 +1817,7 @@ Laravel Framework 12.48.1
 
 ## Key files (fingerprints)
 
-- `routes/web.php` SHA1: `65a02c788509ded20b954db4fb246e111c1b6842`
+- `routes/web.php` SHA1: `337260b3c9984ffdca427291201c9e1b4bbabf56`
 - `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `08c091cf41c3662daf8b723c6fa2ae367426eb1c`
 - `resources/views/family/planpag.blade.php` SHA1: `210b29676169247478ea186304637bb6bd04d2ad`
 - `tests/Feature/PlanpagUiPageTest.php` SHA1: `55d97d8a3b5ce9f0a0b84e29f56d9062ab46bfd6`
@@ -1927,7 +1953,7 @@ Laravel Framework 12.48.1
 
 ### Latest routes_full output
 
-- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\routes_full_20260213_183640.txt`
+- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\routes_full_20260213_200444.txt`
 
 ```
 
@@ -1956,6 +1982,17 @@ Laravel Framework 12.48.1
   GET|HEAD        f/{family}/planpag ................................................................................. family.planpag  FamilyPlanpagPageController
   POST            f/{family}/planpag/{occurrence}/mark-paid ..................................... family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
   POST            f/{family}/planpag/{occurrence}/unmark-paid ............................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        f/{family}/scenarios ................................................................... family.scenarios.index  FamilyScenariosController@index
+  POST            f/{family}/scenarios ................................................................... family.scenarios.store  FamilyScenariosController@store
+  PUT             f/{family}/scenarios/{scenario} ...................................................... family.scenarios.update  FamilyScenariosController@update
+  DELETE          f/{family}/scenarios/{scenario} .................................................... family.scenarios.destroy  FamilyScenariosController@destroy
+  GET|HEAD        f/{family}/scenarios/{scenario}/budget-lines ...................................... family.budget.lines.index  FamilyBudgetLinesController@index
+  POST            f/{family}/scenarios/{scenario}/budget-lines ...................................... family.budget.lines.store  FamilyBudgetLinesController@store
+  PUT             f/{family}/scenarios/{scenario}/budget-lines/{line} ............................. family.budget.lines.update  FamilyBudgetLinesController@update
+  DELETE          f/{family}/scenarios/{scenario}/budget-lines/{line} ........................... family.budget.lines.destroy  FamilyBudgetLinesController@destroy
+  POST            f/{family}/scenarios/{scenario}/budget-lines/{line}/entries ................... family.budget.entries.store  FamilyBudgetEntriesController@store
+  DELETE          f/{family}/scenarios/{scenario}/budget-lines/{line}/entries/{entry} ....... family.budget.entries.destroy  FamilyBudgetEntriesController@destroy
+  POST            f/{family}/scenarios/{scenario}/budget-lines/{line}/toggle-active ... family.budget.lines.toggleActive  FamilyBudgetLinesController@toggleActive
   GET|HEAD        f/{family}/taxonomia ................................................................................. family.taxonomy  TaxonomyController@index
   POST            families ................................................................................................ families.store  FamilyController@store
   POST            families/{family}/activate ........................................................................ families.activate  FamilyController@activate
@@ -1979,35 +2016,41 @@ Laravel Framework 12.48.1
   GET|HEAD        verify-email ....................................................................... verification.notice  Auth\EmailVerificationPromptController
   GET|HEAD        verify-email/{id}/{hash} ....................................................................... verification.verify  Auth\VerifyEmailController
 
-                                                                                                                                                Showing [47] routes
+                                                                                                                                                Showing [58] routes
 
 ```
 
 ### Latest timestamp snapshot (short)
 
-- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\snapshot_20260213_183640.md`
+- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\snapshot_20260213_200444.md`
 
 ```
 # FamilyFin Snapshot
 
-- Generated at: `2026-02-13T18:36:40.2756694-03:00`
+- Generated at: `2026-02-13T20:04:44.1768806-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
-- Branch: `main`
-- HEAD: `d8e4164`
-- Upstream: `origin/main`
+- Branch: `chore/snapshot-update-20260213-200443`
+- HEAD: `6d29ebe`
+- Upstream: `none`
 
 ### Status
 
 ```
-## main...origin/main
+## chore/snapshot-update-20260213-200443
+ M docs/snapshots/SNAPSHOT_FULL.md
+ M docs/snapshots/SNAPSHOT_LATEST.md
 ```
 
 ### Last 15 commits
 
 ```
+6d29ebe Feat/rbac budget routes (#48)
+3d8965c Fix: normalize budget entry competence to month start (#47)
+29788e0 RBAC: authorize taxonomy via policy (#46)
+452fd33 Update snapshots (#45)
 d8e4164 RBAC: authorize bills and planpag via policies (#44)
 40e2265 Feat/rbac family members policy (#43)
 2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
@@ -2019,16 +2062,14 @@ d8e4164 RBAC: authorize bills and planpag via policies (#44)
 b029d8d Add IncomePolicy (tenancy) + auto snapshot post-commit hook (#35)
 aafacd8 Improve incomes UI (table, edit, delete, totals) (#34)
 23db586 Add Receitas link to family navigation (#33)
-c11536f Update snapshots (#32)
-53bafd8 Track snapshot docs (LATEST + FULL) (#31)
-a537808 Add incomes feature (tenancy scoped) + IncomeFlowTest (#30)
-a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#29)
 ```
 
 ### Diff stat (working tree)
 
 ```
-(no output)
+ docs/snapshots/SNAPSHOT_FULL.md   | 169 +++++++++++++++++++++++---------------
+ docs/snapshots/SNAPSHOT_LATEST.md |  46 +++++------
+ 2 files changed, 127 insertions(+), 88 deletions(-)
 ```
 
 ## Local main protection (githooks)
@@ -2064,9 +2105,9 @@ Zend Engine v4.2.12, Copyright (c) Zend Technologies
 ### Composer version
 
 ```
+[32mComposer[39m version [33m2.8.12[39m 2025-09-19 13:41:59
 [32mPHP[39m version [33m8.2.12[39m (C:\.xampp\php\php.exe)
 Run the "diagnose" command to get more detailed diagnostics output.
-[32mComposer[39m version [33m2.8.12[39m 2025-09-19 13:41:59
 ```
 
 ### Laravel / Artisan version
@@ -2095,7 +2136,7 @@ MAIL_MAILER=***REDACTED***
 
 ## Key project files (fingerprints)
 
-- `routes/web.php` SHA1: `65a02c788509ded20b954db4fb246e111c1b6842`
+- `routes/web.php` SHA1: `337260b3c9984ffdca427291201c9e1b4bbabf56`
 - `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `08c091cf41c3662daf8b723c6fa2ae367426eb1c`
 - `resources/views/family/planpag.blade.php` SHA1: `210b29676169247478ea186304637bb6bd04d2ad`
 - `tests/Feature/PlanpagUiPageTest.php` SHA1: `55d97d8a3b5ce9f0a0b84e29f56d9062ab46bfd6`
@@ -2107,18 +2148,18 @@ MAIL_MAILER=***REDACTED***
 ### Matches in routes/web.php
 
 ```
-8: use App\Http\Controllers\FamilyPlanpagPageController;
-9: use App\Http\Controllers\FamilyPlanpagActionsController;
-11: use App\Http\Controllers\PlanpagController;
-35: Route::get('/planpag', [PlanpagController::class, 'index']);
-90:             // PlanPag UI
-91:             Route::get('/planpag', FamilyPlanpagPageController::class)
-92:                 ->name('family.planpag');
-94:             // PlanPag actions
-95:             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
-96:                 ->name('family.planpag.markPaid');
-98:             Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
-99:                 ->name('family.planpag.unmarkPaid');
+11: use App\Http\Controllers\FamilyPlanpagPageController;
+12: use App\Http\Controllers\FamilyPlanpagActionsController;
+13: use App\Http\Controllers\PlanpagController;
+44: Route::get('/planpag', [PlanpagController::class, 'index']);
+102:             | PlanPag UI
+105:             Route::get('/planpag', FamilyPlanpagPageController::class)
+106:                 ->name('family.planpag');
+110:             | PlanPag actions
+113:             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
+114:                 ->name('family.planpag.markPaid');
+116:             Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
+117:                 ->name('family.planpag.unmarkPaid');
 ```
 
 ## Routes
@@ -2134,7 +2175,7 @@ MAIL_MAILER=***REDACTED***
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260213_183640.txt`
+- Saved to: `docs\snapshots\routes_full_20260213_200444.txt`
 
 ## Notes
 
