@@ -1,23 +1,28 @@
 ﻿# FamilyFin Snapshot
 
-- Generated at: `2026-02-13T12:00:22.1895340-03:00`
+- Generated at: `2026-02-13T16:51:20.0672920-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
-- Branch: `chore/snapshot-update`
-- HEAD: `0f6123b`
+- Branch: `feat/rbac-family-members-policy`
+- HEAD: `6659fe2`
 - Upstream: `none`
 
 ### Status
 
 ```
-## chore/snapshot-update
+## feat/rbac-family-members-policy
+ M docs/snapshots/SNAPSHOT_FULL.md
+ M docs/snapshots/SNAPSHOT_LATEST.md
 ```
 
 ### Last 15 commits
 
 ```
+6659fe2 RBAC: add FamilyMemberPolicy and authorize family members
+2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
+47bf31e Update snapshots (LATEST + FULL) (#41)
 0f6123b Add family members management (roles + UI) (#40)
 554038a Update snapshots (LATEST + FULL) (#39)
 03b617a Fix incomes tenancy: scopeBindings + harden IncomeFlowTest (#38)
@@ -30,15 +35,14 @@ c11536f Update snapshots (#32)
 a537808 Add incomes feature (tenancy scoped) + IncomeFlowTest (#30)
 a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#29)
 4e52acd chore(docs): add snapshot system (latest + full) (#28)
-dea1acc chore(git): protect main with local hooks (#27)
-ae54ec1 feat(planpag): allow custom paid amount on mark paid (#26)
-588c073 test(planpag): cover unmark paid flow (#25)
 ```
 
 ### Diff stat (working tree)
 
 ```
-(no output)
+ docs/snapshots/SNAPSHOT_FULL.md   | 1408 +++++++++++++++++++------------------
+ docs/snapshots/SNAPSHOT_LATEST.md |   26 +-
+ 2 files changed, 724 insertions(+), 710 deletions(-)
 ```
 
 ## Local main protection (githooks)
@@ -131,15 +135,15 @@ MAIL_MAILER=***REDACTED***
 ### PlanPag routes (filtered from route:list)
 
 ```
-  GET|HEAD        f/{family}/planpag family.planpag ÔÇ║ FamiÔÇª
-  POST            f/{family}/planpag/{occurrence}/mark-paid family.planpag.markPaid ÔÇ║ FamilyPlanpagActionsController@markPaÔÇª
-  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid ÔÇ║ FamilyPlanpagActionsController@unmarkÔÇª
-  GET|HEAD        planpag ......... PlanpagController@index
+  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag ÔÇ║ FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid ÔÇ║ FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid ÔÇ║ FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
 ```
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260213_120022.txt`
+- Saved to: `docs\snapshots\routes_full_20260213_165120.txt`
 
 ## Notes
 

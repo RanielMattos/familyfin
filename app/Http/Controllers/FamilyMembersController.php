@@ -5,34 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Family;
 use App\Models\FamilyMember;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class FamilyMembersController extends Controller
 {
-    private function manageRoles(): array
-    {
-        // Suporta dados antigos (lowercase) e o padrão atual (uppercase)
-        return [
-            FamilyMember::ROLE_OWNER,
-            FamilyMember::ROLE_ADMIN,
-            strtolower(FamilyMember::ROLE_OWNER),
-            strtolower(FamilyMember::ROLE_ADMIN),
-        ];
-    }
-
-    private function canManage(Family $family): bool
-    {
-        $user = request()->user();
-        if (!$user) return false;
-
-        return $user->families()
-            ->whereKey($family->id)
-            ->wherePivotIn('role', $this->manageRoles())
-            ->exists();
-    }
-
     private function ownersCount(Family $family): int
     {
         // Conta OWNER mesmo que esteja salvo como 'owner'
@@ -41,8 +21,21 @@ class FamilyMembersController extends Controller
             ->count();
     }
 
-    public function index(Request $request, Family $family)
+    private function rolesForUi(): array
     {
+        return [
+            FamilyMember::ROLE_OWNER  => 'Owner',
+            FamilyMember::ROLE_ADMIN  => 'Admin',
+            FamilyMember::ROLE_MEMBER => 'Membro',
+            FamilyMember::ROLE_VIEWER => 'Visualizador',
+        ];
+    }
+
+    public function index(Request $request, Family $family): View
+    {
+        // ✅ Qualquer membro pode ver a lista (Policy decide)
+        $this->authorize('viewAny', [FamilyMember::class, $family]);
+
         $members = $family->members()
             ->with('user')
             ->orderByRaw("CASE UPPER(role)
@@ -54,24 +47,21 @@ class FamilyMembersController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        $roles = [
-            FamilyMember::ROLE_OWNER  => 'Owner',
-            FamilyMember::ROLE_ADMIN  => 'Admin',
-            FamilyMember::ROLE_MEMBER => 'Membro',
-            FamilyMember::ROLE_VIEWER => 'Visualizador',
-        ];
+        // ✅ Só pra UI saber se mostra ações (sem abortar)
+        $canManage = (bool) $request->user()?->can('create', [FamilyMember::class, $family]);
 
         return view('family.members.index', [
-            'family' => $family,
-            'members' => $members,
-            'roles' => $roles,
-            'canManage' => $this->canManage($family),
+            'family'    => $family,
+            'members'   => $members,
+            'roles'     => $this->rolesForUi(),
+            'canManage' => $canManage,
         ]);
     }
 
-    public function store(Request $request, Family $family)
+    public function store(Request $request, Family $family): RedirectResponse
     {
-        abort_unless($this->canManage($family), 403);
+        // ✅ Só OWNER/ADMIN podem adicionar (Policy decide)
+        $this->authorize('create', [FamilyMember::class, $family]);
 
         $validated = $request->validate([
             'email' => ['required', 'email', 'max:255', 'exists:users,email'],
@@ -83,7 +73,9 @@ class FamilyMembersController extends Controller
             ])],
         ]);
 
-        $userToAdd = User::where('email', $validated['email'])->firstOrFail();
+        $userToAdd = User::query()
+            ->where('email', $validated['email'])
+            ->firstOrFail();
 
         if ($family->members()->where('user_id', $userToAdd->id)->exists()) {
             return back()
@@ -93,21 +85,23 @@ class FamilyMembersController extends Controller
 
         DB::transaction(function () use ($family, $userToAdd, $validated) {
             $family->members()->create([
-                'user_id' => $userToAdd->id,
-                'role' => strtoupper($validated['role']),
-                'is_active' => true,
-                'joined_at' => now(),
+                'user_id'    => $userToAdd->id,
+                'role'       => strtoupper($validated['role']),
+                'is_active'  => true,
+                'joined_at'  => now(),
             ]);
         });
 
         return redirect()
-            ->route('family.members.index', ['family' => $family->id])
+            ->route('family.members.index', ['family' => $family])
             ->with('success', 'Membro adicionado com sucesso.');
     }
 
-    public function update(Request $request, Family $family, FamilyMember $member)
+    public function update(Request $request, Family $family, FamilyMember $member): RedirectResponse
     {
-        abort_unless($this->canManage($family), 403);
+        // ✅ Só OWNER/ADMIN podem alterar (Policy decide)
+        // ✅ scopeBindings garante que $member pertence a $family (senão vira 404 antes)
+        $this->authorize('update', $member);
 
         $validated = $request->validate([
             'role' => ['required', Rule::in([
@@ -118,7 +112,7 @@ class FamilyMembersController extends Controller
             ])],
         ]);
 
-        $newRole = strtoupper($validated['role']);
+        $newRole     = strtoupper($validated['role']);
         $currentRole = strtoupper((string) $member->role);
 
         // Proteção: não permitir rebaixar o último OWNER
@@ -133,16 +127,20 @@ class FamilyMembersController extends Controller
         ]);
 
         return redirect()
-            ->route('family.members.index', ['family' => $family->id])
+            ->route('family.members.index', ['family' => $family])
             ->with('success', 'Permissão atualizada.');
     }
 
-    public function destroy(Request $request, Family $family, FamilyMember $member)
+    public function destroy(Request $request, Family $family, FamilyMember $member): RedirectResponse
     {
-        abort_unless($this->canManage($family), 403);
+        // ✅ Só OWNER/ADMIN podem remover (Policy decide)
+        // ✅ scopeBindings garante que $member pertence a $family
+        $this->authorize('delete', $member);
+
+        $authUser = $request->user();
 
         // Segurança: não remover a si mesmo aqui (evita lockout acidental)
-        if ($member->user_id === $request->user()->id) {
+        if ($authUser && $member->user_id === $authUser->id) {
             return back()->withErrors([
                 'delete' => 'Você não pode remover a si mesmo.',
             ]);
@@ -158,7 +156,7 @@ class FamilyMembersController extends Controller
         $member->delete();
 
         return redirect()
-            ->route('family.members.index', ['family' => $family->id])
+            ->route('family.members.index', ['family' => $family])
             ->with('success', 'Membro removido.');
     }
 }
