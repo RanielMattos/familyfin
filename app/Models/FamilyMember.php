@@ -11,8 +11,11 @@ class FamilyMember extends Model
 {
     use HasFactory, HasUlids;
 
-    public const ROLE_OWNER  = 'owner';
-    public const ROLE_MEMBER = 'member';
+    // Alinhado com a migration (uppercase)
+    public const ROLE_OWNER  = 'OWNER';
+    public const ROLE_ADMIN  = 'ADMIN';
+    public const ROLE_MEMBER = 'MEMBER';
+    public const ROLE_VIEWER = 'VIEWER';
 
     protected $table = 'family_members';
 
