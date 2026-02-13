@@ -1,23 +1,25 @@
 ﻿# FamilyFin Snapshot
 
-- Generated at: `2026-02-11T20:05:43.5537821-03:00`
+- Generated at: `2026-02-13T12:00:22.1895340-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
 - Branch: `chore/snapshot-update`
-- HEAD: `03b617a`
-- Upstream: `origin/chore/snapshot-update`
+- HEAD: `0f6123b`
+- Upstream: `none`
 
 ### Status
 
 ```
-## chore/snapshot-update...origin/chore/snapshot-update [ahead 3, behind 2]
+## chore/snapshot-update
 ```
 
 ### Last 15 commits
 
 ```
+0f6123b Add family members management (roles + UI) (#40)
+554038a Update snapshots (LATEST + FULL) (#39)
 03b617a Fix incomes tenancy: scopeBindings + harden IncomeFlowTest (#38)
 11fd65d Fix/incomes policy (#37)
 b029d8d Add IncomePolicy (tenancy) + auto snapshot post-commit hook (#35)
@@ -31,8 +33,6 @@ a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#
 dea1acc chore(git): protect main with local hooks (#27)
 ae54ec1 feat(planpag): allow custom paid amount on mark paid (#26)
 588c073 test(planpag): cover unmark paid flow (#25)
-8ea343e feat(planpag): toggle paid action on UI (#24)
-0baedee feat(planpag): unmark occurrence as paid (#23)
 ```
 
 ### Diff stat (working tree)
@@ -100,7 +100,7 @@ MAIL_MAILER=***REDACTED***
 
 ## Key project files (fingerprints)
 
-- `routes/web.php` SHA1: `e2f034ff9ecad9638c56b03ec67c171b2d1fce4b`
+- `routes/web.php` SHA1: `65a02c788509ded20b954db4fb246e111c1b6842`
 - `app/Http/Controllers/FamilyPlanpagActionsController.php` SHA1: `ba9e67bbc0b46993d9f805ccaf828facb224f9e0`
 - `resources/views/family/planpag.blade.php` SHA1: `210b29676169247478ea186304637bb6bd04d2ad`
 - `tests/Feature/PlanpagUiPageTest.php` SHA1: `55d97d8a3b5ce9f0a0b84e29f56d9062ab46bfd6`
@@ -115,15 +115,15 @@ MAIL_MAILER=***REDACTED***
 8: use App\Http\Controllers\FamilyPlanpagPageController;
 9: use App\Http\Controllers\FamilyPlanpagActionsController;
 11: use App\Http\Controllers\PlanpagController;
-34: Route::get('/planpag', [PlanpagController::class, 'index']);
-89:             // PlanPag UI
-90:             Route::get('/planpag', FamilyPlanpagPageController::class)
-91:                 ->name('family.planpag');
-93:             // PlanPag actions
-94:             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
-95:                 ->name('family.planpag.markPaid');
-97:             Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
-98:                 ->name('family.planpag.unmarkPaid');
+35: Route::get('/planpag', [PlanpagController::class, 'index']);
+90:             // PlanPag UI
+91:             Route::get('/planpag', FamilyPlanpagPageController::class)
+92:                 ->name('family.planpag');
+94:             // PlanPag actions
+95:             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
+96:                 ->name('family.planpag.markPaid');
+98:             Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
+99:                 ->name('family.planpag.unmarkPaid');
 ```
 
 ## Routes
@@ -131,15 +131,15 @@ MAIL_MAILER=***REDACTED***
 ### PlanPag routes (filtered from route:list)
 
 ```
-  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag › FamilyPlanpagPageController
-  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid › FamilyPlanpagActionsController@markPaid
-  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid › FamilyPlanpagActionsController@unmarkPaid
-  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
+  GET|HEAD        f/{family}/planpag family.planpag ÔÇ║ FamiÔÇª
+  POST            f/{family}/planpag/{occurrence}/mark-paid family.planpag.markPaid ÔÇ║ FamilyPlanpagActionsController@markPaÔÇª
+  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid ÔÇ║ FamilyPlanpagActionsController@unmarkÔÇª
+  GET|HEAD        planpag ......... PlanpagController@index
 ```
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260211_200543.txt`
+- Saved to: `docs\snapshots\routes_full_20260213_120022.txt`
 
 ## Notes
 
