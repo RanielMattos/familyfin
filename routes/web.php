@@ -11,6 +11,7 @@ use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\PlanpagController;
 use App\Http\Controllers\FamilyBillsController;
 use App\Http\Controllers\FamilyIncomesController;
+use App\Http\Controllers\FamilyMembersController;
 
 use App\Http\Middleware\EnsureFamilyAccess;
 use App\Http\Middleware\AutoActivateFamily;
@@ -110,11 +111,21 @@ Route::middleware('auth')->group(function () {
             Route::delete('/bills/{bill}', [FamilyBillsController::class, 'destroy'])->name('family.bills.destroy');
             Route::post('/bills/{bill}/toggle-active', [FamilyBillsController::class, 'toggleActive'])->name('family.bills.toggleActive');
 
-            // ✅ Incomes (novas rotas)
-            Route::scopeBindings()->group(function () {
-                Route::resource('incomes', FamilyIncomesController::class)
-                    ->except(['show', 'edit', 'create']);
-            });
+              // ✅ Members + Incomes (scoped bindings)
+              Route::scopeBindings()->group(function () {
+                  Route::get('/members', [FamilyMembersController::class, 'index'])
+                      ->name('family.members.index');
+                  Route::post('/members', [FamilyMembersController::class, 'store'])
+                      ->name('family.members.store');
+                  Route::put('/members/{member}', [FamilyMembersController::class, 'update'])
+                      ->name('family.members.update');
+                  Route::delete('/members/{member}', [FamilyMembersController::class, 'destroy'])
+                      ->name('family.members.destroy');
+
+                  Route::resource('incomes', FamilyIncomesController::class)
+                      ->except(['show', 'edit', 'create']);
+              });
+
         });
 });
 

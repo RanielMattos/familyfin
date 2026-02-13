@@ -3,15 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Income;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Family extends Model
 {
-    use HasUlids;
     use HasFactory, HasUlids;
 
     protected $fillable = [
@@ -30,18 +28,19 @@ class Family extends Model
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
+
     public function scenarios(): HasMany
     {
         return $this->hasMany(Scenario::class)->orderBy('start_date');
     }
+
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class)->orderBy('sort_order')->orderBy('name');
     }
+
     public function incomes(): HasMany
     {
         return $this->hasMany(Income::class);
     }
-
-
 }
