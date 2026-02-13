@@ -1,9 +1,9 @@
 ﻿# FamilyFin FULL Snapshot (maximal, safe-redacted)
 
-- Generated at: `2026-02-13T12:00:23.9553782-03:00`
+- Generated at: `2026-02-13T16:51:21.2249111-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
-- Branch: `chore/snapshot-update`
-- HEAD: `0f6123b`
+- Branch: `feat/rbac-family-members-policy`
+- HEAD: `6659fe2`
 - Upstream: `none`
 - Safety: secrets redacted = ON
 
@@ -21,13 +21,17 @@ origin	https://github.com/RanielMattos/familyfin.git (push)
 ### Status
 
 ```
-## chore/snapshot-update
+## feat/rbac-family-members-policy
+ M docs/snapshots/SNAPSHOT_FULL.md
  M docs/snapshots/SNAPSHOT_LATEST.md
 ```
 
 ### Last 50 commits
 
 ```
+6659fe2 RBAC: add FamilyMemberPolicy and authorize family members
+2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
+47bf31e Update snapshots (LATEST + FULL) (#41)
 0f6123b Add family members management (roles + UI) (#40)
 554038a Update snapshots (LATEST + FULL) (#39)
 03b617a Fix incomes tenancy: scopeBindings + harden IncomeFlowTest (#38)
@@ -75,7 +79,6 @@ dbbacb6 chore: add root healthcheck route
 7193e81 feat: add scenarios and budget core
 e68a8a2 feat: add taxonomy seed and endpoint
 f5d3c6c feat: add family tenancy core
-bb9dcf9 chore: bootstrap laravel app
 ```
 
 ### First commit + total commits
@@ -84,7 +87,7 @@ bb9dcf9 chore: bootstrap laravel app
 bb9dcf95527951ee44f43c6fe046a99bda125b42
 ```
 ```
-48
+51
 ```
 
 ## Git - Deep
@@ -94,8 +97,9 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 
 ```
   chore/guard-main
-* chore/snapshot-update
-  feat/family-members
+  chore/snapshot-update
+* feat/rbac-family-members-policy
+  feat/rbac-roles
   fix/incomes-policy
   fix/incomes-tenancy
   main
@@ -103,9 +107,9 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
   remotes/origin/RanielMattos-patch-1
   remotes/origin/chore/snapshot-update
   remotes/origin/chore/track-snapshots
-  remotes/origin/feat/family-members
   remotes/origin/feat/incomes-ui
   remotes/origin/feat/menu-receitas
+  remotes/origin/feat/rbac-roles
   remotes/origin/fix/incomes-policy
   remotes/origin/fix/incomes-scope-bindings
   remotes/origin/fix/incomes-tenancy
@@ -122,7 +126,7 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 ### Describe
 
 ```
-0f6123b-dirty
+6659fe2-dirty
 ```
 
 ### Submodules
@@ -134,8 +138,9 @@ bb9dcf95527951ee44f43c6fe046a99bda125b42
 ### Working tree diff stat
 
 ```
- docs/snapshots/SNAPSHOT_LATEST.md | 42 +++++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ docs/snapshots/SNAPSHOT_FULL.md   | 1408 +++++++++++++++++++------------------
+ docs/snapshots/SNAPSHOT_LATEST.md |   30 +-
+ 2 files changed, 728 insertions(+), 710 deletions(-)
 ```
 
 ### Tracked files (paths)
@@ -189,6 +194,7 @@ app/Models/Income.php
 app/Models/Scenario.php
 app/Models/TaxonomyNode.php
 app/Models/User.php
+app/Policies/FamilyMemberPolicy.php
 app/Policies/IncomePolicy.php
 app/Providers/AppServiceProvider.php
 app/Services/BillOccurrenceGenerator.php
@@ -351,13 +357,13 @@ vite.config.js
 100644 blob bf1ebfa7882b546604645fbef3a780c55f0660d7    1311	app/Http/Controllers/Auth/PasswordResetLinkController.php
 100644 blob 37235fa9927a95ba11fb8e9dd174bbb35bfe901b    1963	app/Http/Controllers/Auth/RegisteredUserController.php
 100644 blob 784765e3a5961b9293b74158d8c270088ef4738a     800	app/Http/Controllers/Auth/VerifyEmailController.php
-100644 blob 8677cd5cabb06901eac3d8f9a500094d2c1dab45      77	app/Http/Controllers/Controller.php
+100644 blob bd3e17ed1c3add3d68702e689a75dace1e0e3023     308	app/Http/Controllers/Controller.php
 100644 blob 2e8760627bd26f15d9b06cf6b87a3eb8b3593062     705	app/Http/Controllers/DashboardController.php
 100644 blob 2f6b29c9f173043c5c0933ae1b79e6df8e4a06d7    4358	app/Http/Controllers/FamilyBillsController.php
 100644 blob ef21fa10d11da34aff610e460dbdb523628e9448    1291	app/Http/Controllers/FamilyController.php
 100644 blob 97bde3e468fd84632c4a05f73fc820f7c17d7021     485	app/Http/Controllers/FamilyDashboardController.php
-100644 blob 091cfeaebac24dad123d70a29bfd1c59187776f7    2189	app/Http/Controllers/FamilyIncomesController.php
-100644 blob c9eb5b27de4c8a3af7faa618d6aaef5d32742935    5268	app/Http/Controllers/FamilyMembersController.php
+100644 blob fe4eca3a82bcc7efdefc7ef54137fe21822693aa    2235	app/Http/Controllers/FamilyIncomesController.php
+100644 blob ec354c233b9772347d020b8e9611799a0f869bb0    5547	app/Http/Controllers/FamilyMembersController.php
 100644 blob 13b586e2f2ef8a016f2bc100a49d110fcb6026af    4377	app/Http/Controllers/FamilyPlanpagActionsController.php
 100644 blob 1af861b6c2491357e88cbd9f777da1ce956a7a68     903	app/Http/Controllers/FamilyPlanpagPageController.php
 100644 blob 3427a887acd356384dccd154b470c55dde735628    3288	app/Http/Controllers/PlanpagController.php
@@ -377,8 +383,9 @@ vite.config.js
 100644 blob bd678642d22da0ac9c9bfb477faabb90be0206b7     487	app/Models/Income.php
 100644 blob 5da243d06484147890203933e74b6ff70fddc8ec    1103	app/Models/Scenario.php
 100644 blob 0a7e1b8bb54f16dfd25e3c2f2405ac88050d219a    1582	app/Models/TaxonomyNode.php
-100644 blob 32c997668cb4bc3b352af95d7f54478ddd444aa4    1418	app/Models/User.php
-100644 blob 34ebe983009a8a27cbc0b8c97adf6aaffe55ca72    1370	app/Policies/IncomePolicy.php
+100644 blob 6baa3966928694de19f57396816838536592bbcd    2223	app/Models/User.php
+100644 blob 0dda4f81a2fd97693ec2b4c3508446befe75ea01    1217	app/Policies/FamilyMemberPolicy.php
+100644 blob 22df510fd159fc92eba951b079a7d2a184af8cf7    1954	app/Policies/IncomePolicy.php
 100644 blob 452e6b65b7a18aa7c3aaf886fd183a002d381e34     361	app/Providers/AppServiceProvider.php
 100644 blob 5ee701201188bf6a94331e8d32c3a994d854666a    6965	app/Services/BillOccurrenceGenerator.php
 100644 blob fb7436eb5c4189223ec018fff1feeacfc6db3cd4    1318	app/Services/FamilyActivationService.php
@@ -431,8 +438,8 @@ vite.config.js
 100644 blob a3ac0624cb685cbe224755406bc8a8f9ee0bcccf     267	database/seeders/IncomeSeeder.php
 100644 blob d4c9573890792cf7a479219db3bb318950f6ffd0    6229	database/seeders/TaxonomySeeder.php
 100644 blob 6ec5420b491b5756ffc04685773ee76173695138     497	docs/SETUP_BREEZE.md
-100644 blob d7f63e6c65270e04a1647ecb48113312854973bc  150013	docs/snapshots/SNAPSHOT_FULL.md
-100644 blob a86cdc35d149cc00ab19752fe0adf77aaf2a888e    4868	docs/snapshots/SNAPSHOT_LATEST.md
+100644 blob 6d2d48fefbdfcb80ab62192647ecbeb4c75c8d47   97901	docs/snapshots/SNAPSHOT_FULL.md
+100644 blob d57ad29e84b819ca241a7ed019acd4564cc83c35    4569	docs/snapshots/SNAPSHOT_LATEST.md
 100644 blob 84a34298c20446cf7f5c8a2ca68ef47b3164409e  136510	package-lock.json
 100644 blob 2ea7e1db406eda18cf430972ec87ac24d7d3499f     549	package.json
 100644 blob d703241533c7f007d11c7f25ea7772f0155fadb8    1284	phpunit.xml
@@ -519,7 +526,7 @@ vite.config.js
 ### Shortlog (authors)
 
 ```
-    48	RanielMattos
+    51	RanielMattos
 ```
 
 ### Full history (reverse, detailed)
@@ -668,8 +675,17 @@ Fix incomes tenancy: scopeBindings + harden IncomeFlowTest (#38)
 554038a | 2026-02-13 08:32:36 -0300 | RanielMattos | 
 Update snapshots (LATEST + FULL) (#39)
 
-0f6123b | 2026-02-13 11:57:39 -0300 | RanielMattos |  (HEAD -> chore/snapshot-update, origin/main, origin/HEAD, main)
+0f6123b | 2026-02-13 11:57:39 -0300 | RanielMattos | 
 Add family members management (roles + UI) (#40)
+
+47bf31e | 2026-02-13 12:03:07 -0300 | RanielMattos | 
+Update snapshots (LATEST + FULL) (#41)
+
+2303869 | 2026-02-13 16:27:40 -0300 | RanielMattos |  (origin/main, origin/HEAD, main)
+RBAC: add family role helpers and authorize incomes via policies (#42)
+
+6659fe2 | 2026-02-13 16:50:47 -0300 | RanielMattos |  (HEAD -> feat/rbac-family-members-policy)
+RBAC: add FamilyMemberPolicy and authorize family members
 ```
 
 ## Hooks (local main guard)
@@ -780,133 +796,133 @@ Run the "diagnose" command to get more detailed diagnostics output.
 ### Composer inventory (packages)
 
 ```
-brick/math                         0.14.1
-carbonphp/carbon-doctrine-types    3.2.0
-dflydev/dot-access-data            3.0.3
-doctrine/inflector                 2.1.0
-doctrine/lexer                     3.0.1
-dragonmantank/cron-expression      3.6.0
-egulias/email-validator            4.0.4
-fakerphp/faker                     1.24.1
-filp/whoops                        2.18.4
-fruitcake/php-cors                 1.4.0
-graham-campbell/result-type        1.1.4
-guzzlehttp/guzzle                  7.10.0
-guzzlehttp/promises                2.3.0
-guzzlehttp/psr7                    2.8.0
-guzzlehttp/uri-template            1.0.5
-hamcrest/hamcrest-php              2.1.1
-laravel/breeze                     2.3.8
-laravel/framework                  12.48.1
-laravel/pail                       1.2.4
-laravel/pint                       1.27.0
-laravel/prompts                    0.3.10
-laravel/sail                       1.52.0
-laravel/serializable-closure       2.0.8
-laravel/tinker                     2.11.0
-league/commonmark                  2.8.0
-league/config                      1.2.0
-league/flysystem                   3.31.0
-league/flysystem-local             3.31.0
-league/mime-type-detection         1.16.0
-league/uri                         7.8.0
-league/uri-interfaces              7.8.0
-mockery/mockery                    1.6.12
-monolog/monolog                    3.10.0
-myclabs/deep-copy                  1.13.4
-nesbot/carbon                      3.11.0
-nette/schema                       1.3.3
-nette/utils                        4.1.1
-nikic/php-parser                   5.7.0
-nunomaduro/collision               8.8.3
-nunomaduro/termwind                2.3.3
-phar-io/manifest                   2.0.4
-phar-io/version                    3.2.1
-phpoption/phpoption                1.9.5
-phpunit/php-code-coverage          11.0.12
-phpunit/php-file-iterator          5.1.0
-phpunit/php-invoker                5.0.1
-phpunit/php-text-template          4.0.1
-phpunit/php-timer                  7.0.1
-phpunit/phpunit                    11.5.48
-psr/clock                          1.0.0
-psr/container                      2.0.2
-psr/event-dispatcher               1.0.0
-psr/http-client                    1.0.3
-psr/http-factory                   1.1.0
-psr/http-message                   2.0
-psr/log                            3.0.2
-psr/simple-cache                   3.0.0
-psy/psysh                          0.12.18
-ralouphie/getallheaders            3.0.3
-ramsey/collection                  2.1.1
-ramsey/uuid                        4.9.2
-sebastian/cli-parser               3.0.2
-sebastian/code-unit                3.0.3
-sebastian/code-unit-reverse-lookup 4.0.1
-sebastian/comparator               6.3.2
-sebastian/complexity               4.0.1
-sebastian/diff                     6.0.2
-sebastian/environment              7.2.1
-sebastian/exporter                 6.3.2
-sebastian/global-state             7.0.2
-sebastian/lines-of-code            3.0.1
-sebastian/object-enumerator        6.0.1
-sebastian/object-reflector         4.0.1
-sebastian/recursion-context        6.0.3
-sebastian/type                     5.1.3
-sebastian/version                  5.0.2
-staabm/side-effects-detector       1.0.5
-symfony/clock                      7.4.0
-symfony/console                    7.4.3
-symfony/css-selector               7.4.0
-symfony/deprecation-contracts      3.6.0
-symfony/error-handler              7.4.0
-symfony/event-dispatcher           7.4.0
-symfony/event-dispatcher-contracts 3.6.0
-symfony/finder                     7.4.3
-symfony/http-foundation            7.4.3
-symfony/http-kernel                7.4.3
-symfony/mailer                     7.4.3
-symfony/mime                       7.4.0
-symfony/polyfill-ctype             1.33.0
-symfony/polyfill-intl-grapheme     1.33.0
-symfony/polyfill-intl-idn          1.33.0
-symfony/polyfill-intl-normalizer   1.33.0
-symfony/polyfill-mbstring          1.33.0
-symfony/polyfill-php80             1.33.0
-symfony/polyfill-php83             1.33.0
-symfony/polyfill-php84             1.33.0
-symfony/polyfill-php85             1.33.0
-symfony/polyfill-uuid              1.33.0
-symfony/process                    7.4.3
-symfony/routing                    7.4.3
-symfony/service-contracts          3.6.1
-symfony/string                     7.4.0
-symfony/translation                7.4.3
-symfony/translation-contracts      3.6.1
-symfony/uid                        7.4.0
-symfony/var-dumper                 7.4.3
-symfony/yaml                       7.4.1
-theseer/tokenizer                  1.3.1
-tijsverkoyen/css-to-inline-styles  2.4.0
-vlucas/phpdotenv                   5.6.3
-voku/portable-ascii                2.0.3
+brick/math                         0.14.1  Arbitrary-precision arithmetic library
+carbonphp/carbon-doctrine-types    3.2.0   Types to use Carbon in Doctrine
+dflydev/dot-access-data            3.0.3   Given a deep data structure, access data by dot notation.
+doctrine/inflector                 2.1.0   PHP Doctrine Inflector is a small library that can perform string manipulations with regard to upper/lowerc...
+doctrine/lexer                     3.0.1   PHP Doctrine Lexer parser library that can be used in Top-Down, Recursive Descent Parsers.
+dragonmantank/cron-expression      3.6.0   CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due
+egulias/email-validator            4.0.4   A library for validating emails against several RFCs
+fakerphp/faker                     1.24.1  Faker is a PHP library that generates fake data for you.
+filp/whoops                        2.18.4  php error handling for cool kids
+fruitcake/php-cors                 1.4.0   Cross-origin resource sharing library for the Symfony HttpFoundation
+graham-campbell/result-type        1.1.4   An Implementation Of The Result Type
+guzzlehttp/guzzle                  7.10.0  Guzzle is a PHP HTTP client library
+guzzlehttp/promises                2.3.0   Guzzle promises library
+guzzlehttp/psr7                    2.8.0   PSR-7 message implementation that also provides common utility methods
+guzzlehttp/uri-template            1.0.5   A polyfill class for uri_template of PHP
+hamcrest/hamcrest-php              2.1.1   This is the PHP port of Hamcrest Matchers
+laravel/breeze                     2.3.8   Minimal Laravel authentication scaffolding with Blade and Tailwind.
+laravel/framework                  12.48.1 The Laravel Framework.
+laravel/pail                       1.2.4   Easily delve into your Laravel application's log files directly from the command line.
+laravel/pint                       1.27.0  An opinionated code formatter for PHP.
+laravel/prompts                    0.3.10  Add beautiful and user-friendly forms to your command-line applications.
+laravel/sail                       1.52.0  Docker files for running a basic Laravel application.
+laravel/serializable-closure       2.0.8   Laravel Serializable Closure provides an easy and secure way to serialize closures in PHP.
+laravel/tinker                     2.11.0  Powerful REPL for the Laravel framework.
+league/commonmark                  2.8.0   Highly-extensible PHP Markdown parser which fully supports the CommonMark spec and GitHub-Flavored Markdown...
+league/config                      1.2.0   Define configuration arrays with strict schemas and access values with dot notation
+league/flysystem                   3.31.0  File storage abstraction for PHP
+league/flysystem-local             3.31.0  Local filesystem adapter for Flysystem.
+league/mime-type-detection         1.16.0  Mime-type detection for Flysystem
+league/uri                         7.8.0   URI manipulation library
+league/uri-interfaces              7.8.0   Common tools for parsing and resolving RFC3987/RFC3986 URI
+mockery/mockery                    1.6.12  Mockery is a simple yet flexible PHP mock object framework
+monolog/monolog                    3.10.0  Sends your logs to files, sockets, inboxes, databases and various web services
+myclabs/deep-copy                  1.13.4  Create deep copies (clones) of your objects
+nesbot/carbon                      3.11.0  An API extension for DateTime that supports 281 different languages.
+nette/schema                       1.3.3    Nette Schema: validating data structures against a given Schema.
+nette/utils                        4.1.1     Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encodin...
+nikic/php-parser                   5.7.0   A PHP parser written in PHP
+nunomaduro/collision               8.8.3   Cli error handling for console/command-line PHP applications.
+nunomaduro/termwind                2.3.3   Its like Tailwind CSS, but for the console.
+phar-io/manifest                   2.0.4   Component for reading phar.io manifest information from a PHP Archive (PHAR)
+phar-io/version                    3.2.1   Library for handling version information and constraints
+phpoption/phpoption                1.9.5   Option Type for PHP
+phpunit/php-code-coverage          11.0.12 Library that provides collection, processing, and rendering functionality for PHP code coverage information.
+phpunit/php-file-iterator          5.1.0   FilterIterator implementation that filters files based on a list of suffixes.
+phpunit/php-invoker                5.0.1   Invoke callables with a timeout
+phpunit/php-text-template          4.0.1   Simple template engine.
+phpunit/php-timer                  7.0.1   Utility class for timing
+phpunit/phpunit                    11.5.48 The PHP Unit Testing framework.
+psr/clock                          1.0.0   Common interface for reading the clock.
+psr/container                      2.0.2   Common Container Interface (PHP FIG PSR-11)
+psr/event-dispatcher               1.0.0   Standard interfaces for event handling.
+psr/http-client                    1.0.3   Common interface for HTTP clients
+psr/http-factory                   1.1.0   PSR-17: Common interfaces for PSR-7 HTTP message factories
+psr/http-message                   2.0     Common interface for HTTP messages
+psr/log                            3.0.2   Common interface for logging libraries
+psr/simple-cache                   3.0.0   Common interfaces for simple caching
+psy/psysh                          0.12.18 An interactive shell for modern PHP.
+ralouphie/getallheaders            3.0.3   A polyfill for getallheaders.
+ramsey/collection                  2.1.1   A PHP library for representing and manipulating collections.
+ramsey/uuid                        4.9.2   A PHP library for generating and working with universally unique identifiers (UUIDs).
+sebastian/cli-parser               3.0.2   Library for parsing CLI options
+sebastian/code-unit                3.0.3   Collection of value objects that represent the PHP code units
+sebastian/code-unit-reverse-lookup 4.0.1   Looks up which function or method a line of code belongs to
+sebastian/comparator               6.3.2   Provides the functionality to compare PHP values for equality
+sebastian/complexity               4.0.1   Library for calculating the complexity of PHP code units
+sebastian/diff                     6.0.2   Diff implementation
+sebastian/environment              7.2.1   Provides functionality to handle HHVM/PHP environments
+sebastian/exporter                 6.3.2   Provides the functionality to export PHP variables for visualization
+sebastian/global-state             7.0.2   Snapshotting of global state
+sebastian/lines-of-code            3.0.1   Library for counting the lines of code in PHP source code
+sebastian/object-enumerator        6.0.1   Traverses array structures and object graphs to enumerate all referenced objects
+sebastian/object-reflector         4.0.1   Allows reflection of object attributes, including inherited and non-public ones
+sebastian/recursion-context        6.0.3   Provides functionality to recursively process PHP variables
+sebastian/type                     5.1.3   Collection of value objects that represent the types of the PHP type system
+sebastian/version                  5.0.2   Library that helps with managing the version number of Git-hosted PHP projects
+staabm/side-effects-detector       1.0.5   A static analysis tool to detect side effects in PHP code
+symfony/clock                      7.4.0   Decouples applications from the system clock
+symfony/console                    7.4.3   Eases the creation of beautiful and testable command line interfaces
+symfony/css-selector               7.4.0   Converts CSS selectors to XPath expressions
+symfony/deprecation-contracts      3.6.0   A generic function and convention to trigger deprecation notices
+symfony/error-handler              7.4.0   Provides tools to manage errors and ease debugging PHP code
+symfony/event-dispatcher           7.4.0   Provides tools that allow your application components to communicate with each other by dispatching events ...
+symfony/event-dispatcher-contracts 3.6.0   Generic abstractions related to dispatching event
+symfony/finder                     7.4.3   Finds files and directories via an intuitive fluent interface
+symfony/http-foundation            7.4.3   Defines an object-oriented layer for the HTTP specification
+symfony/http-kernel                7.4.3   Provides a structured process for converting a Request into a Response
+symfony/mailer                     7.4.3   Helps sending emails
+symfony/mime                       7.4.0   Allows manipulating MIME messages
+symfony/polyfill-ctype             1.33.0  Symfony polyfill for ctype functions
+symfony/polyfill-intl-grapheme     1.33.0  Symfony polyfill for intl's grapheme_* functions
+symfony/polyfill-intl-idn          1.33.0  Symfony polyfill for intl's idn_to_ascii and idn_to_utf8 functions
+symfony/polyfill-intl-normalizer   1.33.0  Symfony polyfill for intl's Normalizer class and related functions
+symfony/polyfill-mbstring          1.33.0  Symfony polyfill for the Mbstring extension
+symfony/polyfill-php80             1.33.0  Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions
+symfony/polyfill-php83             1.33.0  Symfony polyfill backporting some PHP 8.3+ features to lower PHP versions
+symfony/polyfill-php84             1.33.0  Symfony polyfill backporting some PHP 8.4+ features to lower PHP versions
+symfony/polyfill-php85             1.33.0  Symfony polyfill backporting some PHP 8.5+ features to lower PHP versions
+symfony/polyfill-uuid              1.33.0  Symfony polyfill for uuid functions
+symfony/process                    7.4.3   Executes commands in sub-processes
+symfony/routing                    7.4.3   Maps an HTTP request to a set of configuration variables
+symfony/service-contracts          3.6.1   Generic abstractions related to writing services
+symfony/string                     7.4.0   Provides an object-oriented API to strings and deals with bytes, UTF-8 code points and grapheme clusters in...
+symfony/translation                7.4.3   Provides tools to internationalize your application
+symfony/translation-contracts      3.6.1   Generic abstractions related to translation
+symfony/uid                        7.4.0   Provides an object-oriented API to generate and represent UIDs
+symfony/var-dumper                 7.4.3   Provides mechanisms for walking through any arbitrary PHP variable
+symfony/yaml                       7.4.1   Loads and dumps YAML files
+theseer/tokenizer                  1.3.1   A small library for converting tokenized PHP source code into XML and potentially other formats
+tijsverkoyen/css-to-inline-styles  2.4.0   CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline...
+vlucas/phpdotenv                   5.6.3   Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.
+voku/portable-ascii                2.0.3   Portable ASCII library - performance optimized (ascii) string functions for php.
 ```
 
 ### Composer inventory (dev packages)
 
 ```
-fakerphp/faker       1.24.1  Faker is a PHP library tha...
-laravel/breeze       2.3.8   Minimal Laravel authentica...
+fakerphp/faker       1.24.1  Faker is a PHP library that generates fake data for you.
+laravel/breeze       2.3.8   Minimal Laravel authentication scaffolding with Blade and Tailwind.
 laravel/framework    12.48.1 The Laravel Framework.
-laravel/pail         1.2.4   Easily delve into your Lar...
-laravel/pint         1.27.0  An opinionated code format...
-laravel/sail         1.52.0  Docker files for running a...
-laravel/tinker       2.11.0  Powerful REPL for the Lara...
-mockery/mockery      1.6.12  Mockery is a simple yet fl...
-nunomaduro/collision 8.8.3   Cli error handling for con...
-phpunit/phpunit      11.5.48 The PHP Unit Testing frame...
+laravel/pail         1.2.4   Easily delve into your Laravel application's log files directly from the command line.
+laravel/pint         1.27.0  An opinionated code formatter for PHP.
+laravel/sail         1.52.0  Docker files for running a basic Laravel application.
+laravel/tinker       2.11.0  Powerful REPL for the Laravel framework.
+mockery/mockery      1.6.12  Mockery is a simple yet flexible PHP mock object framework
+nunomaduro/collision 8.8.3   Cli error handling for console/command-line PHP applications.
+phpunit/phpunit      11.5.48 The PHP Unit Testing framework.
 ```
 
 ### Node / npm
@@ -1110,35 +1126,35 @@ Laravel Framework 12.48.1
 
 ```
 
-  Environment .............................................  
-  Application Name ................................ Laravel  
-  Laravel Version ................................. 12.48.1  
-  PHP Version ...................................... 8.2.12  
-  Composer Version ................................. 2.8.12  
-  Environment ....................................... local  
-  Debug Mode ...................................... ENABLED  
-  URL ........................................... localhost  
-  Maintenance Mode .................................... OFF  
-  Timezone ............................................ UTC  
-  Locale ............................................... en  
+  Environment ......................................................................................................................................  
+  Application Name ......................................................................................................................... Laravel  
+  Laravel Version .......................................................................................................................... 12.48.1  
+  PHP Version ............................................................................................................................... 8.2.12  
+  Composer Version .......................................................................................................................... 2.8.12  
+  Environment ................................................................................................................................ local  
+  Debug Mode ............................................................................................................................... ENABLED  
+  URL .................................................................................................................................... localhost  
+  Maintenance Mode ............................................................................................................................. OFF  
+  Timezone ..................................................................................................................................... UTC  
+  Locale ........................................................................................................................................ en  
 
-  Cache ...................................................  
-  Config ....................................... NOT CACHED  
-  Events ....................................... NOT CACHED  
-  Routes ....................................... NOT CACHED  
-  Views ............................................ CACHED  
+  Cache ............................................................................................................................................  
+  Config ................................................................................................................................ NOT CACHED  
+  Events ................................................................................................................................ NOT CACHED  
+  Routes ................................................................................................................................ NOT CACHED  
+  Views ..................................................................................................................................... CACHED  
 
-  Drivers .................................................  
-  Broadcasting ........................................ log  
-  Cache .......................................... database  
-  Database ......................................... sqlite  
-  Logs ..................................... stack / single  
-  Mail ................................................ log  
-  Queue .......................................... database  
+  Drivers ..........................................................................................................................................  
+  Broadcasting ................................................................................................................................. log  
+  Cache ................................................................................................................................... database  
+  Database .................................................................................................................................. sqlite  
+  Logs .............................................................................................................................. stack / single  
+  Mail ......................................................................................................................................... log  
+  Queue ................................................................................................................................... database  
 ***REDACTED_LINE***
 
-  Storage .................................................  
-  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\public\storage  LINKED  
+  Storage ..........................................................................................................................................  
+  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\public\storage ................................................................ LINKED  
 
 ```
 
@@ -1154,92 +1170,92 @@ Laravel Framework 12.48.1
 
 ```
 
-  app .....................................................  
-  name ............................................ Laravel  
-  env ............................................... local  
-  debug .............................................. true  
-  url .................................... http://localhost  
-  frontend_url ...................... http://localhost:3000  
-  asset_url .......................................... null  
-  timezone ............................................ UTC  
-  locale ............................................... en  
-  fallback_locale ...................................... en  
-  faker_locale ...................................... en_US  
-  cipher ...................................... AES-256-CBC  
-  key . base64: ***REDACTED***
-  previous_keys ........................................ []  
-  maintenance  driver ............................... file  
-  maintenance  store ............................ database  
-  providers  0 ....... Illuminate\Auth\AuthServiceProvider  
-  providers  1  Illuminate\Broadcasting\BroadcastServiceProvider  
-  providers  2 ......... Illuminate\Bus\BusServiceProvider  
-  providers  3 ..... Illuminate\Cache\CacheServiceProvider  
-  providers  4  Illuminate\Foundation\Providers\ConsoleSupportServiceProvider  
-  providers  5  Illuminate\Concurrency\ConcurrencyServiceProvider  
+  app ..............................................................................................................................................  
+  name ..................................................................................................................................... Laravel  
+  env ........................................................................................................................................ local  
+  debug ....................................................................................................................................... true  
+  url ............................................................................................................................. http://localhost  
+  frontend_url ............................................................................................................... http://localhost:3000  
+  asset_url ................................................................................................................................... null  
+  timezone ..................................................................................................................................... UTC  
+  locale ........................................................................................................................................ en  
+  fallback_locale ............................................................................................................................... en  
+  faker_locale ............................................................................................................................... en_US  
+  cipher ............................................................................................................................... AES-256-CBC  
+  key .......................................................................................... base64: ***REDACTED***
+  previous_keys ................................................................................................................................. []  
+  maintenance  driver ........................................................................................................................ file  
+  maintenance  store ..................................................................................................................... database  
+  providers  0 ................................................................................................ Illuminate\Auth\AuthServiceProvider  
+  providers  1 ................................................................................... Illuminate\Broadcasting\BroadcastServiceProvider  
+  providers  2 .................................................................................................. Illuminate\Bus\BusServiceProvider  
+  providers  3 .............................................................................................. Illuminate\Cache\CacheServiceProvider  
+  providers  4 ...................................................................... Illuminate\Foundation\Providers\ConsoleSupportServiceProvider  
+  providers  5 .................................................................................. Illuminate\Concurrency\ConcurrencyServiceProvider  
 ***REDACTED_LINE***
-  providers  7  Illuminate\Database\DatabaseServiceProvider  
-  providers  8  Illuminate\Encryption\EncryptionServiceProvider  
-  providers  9  Illuminate\Filesystem\FilesystemServiceProvider  
-  providers  10  Illuminate\Foundation\Providers\FoundationServiceProvider  
-  providers  11 ... Illuminate\Hashing\HashServiceProvider  
-  providers  12 ...... Illuminate\Mail\MailServiceProvider  
-  providers  13  Illuminate\Notifications\NotificationServiceProvider  
-  providers  14  Illuminate\Pagination\PaginationServiceProvider  
-  providers  15  Illuminate\Auth\Passwords\PasswordResetServiceProvider  
-  providers  16  Illuminate\Pipeline\PipelineServiceProvider  
-  providers  17 .... Illuminate\Queue\QueueServiceProvider  
-  providers  18 .... Illuminate\Redis\RedisServiceProvider  
+  providers  7 ........................................................................................ Illuminate\Database\DatabaseServiceProvider  
+  providers  8 .................................................................................... Illuminate\Encryption\EncryptionServiceProvider  
+  providers  9 .................................................................................... Illuminate\Filesystem\FilesystemServiceProvider  
+  providers  10 ......................................................................... Illuminate\Foundation\Providers\FoundationServiceProvider  
+  providers  11 ............................................................................................ Illuminate\Hashing\HashServiceProvider  
+  providers  12 ............................................................................................... Illuminate\Mail\MailServiceProvider  
+  providers  13 .............................................................................. Illuminate\Notifications\NotificationServiceProvider  
+  providers  14 ................................................................................... Illuminate\Pagination\PaginationServiceProvider  
+  providers  15 ............................................................................ Illuminate\Auth\Passwords\PasswordResetServiceProvider  
+  providers  16 ....................................................................................... Illuminate\Pipeline\PipelineServiceProvider  
+  providers  17 ............................................................................................. Illuminate\Queue\QueueServiceProvider  
+  providers  18 ............................................................................................. Illuminate\Redis\RedisServiceProvider  
 ***REDACTED_LINE***
-  providers  20  Illuminate\Translation\TranslationServiceProvider  
-  providers  21  Illuminate\Validation\ValidationServiceProvider  
-  providers  22 ...... Illuminate\View\ViewServiceProvider  
-  providers  23 ......... App\Providers\AppServiceProvider  
-  aliases  App ............ Illuminate\Support\Facades\App  
-  aliases  Arr .................... Illuminate\Support\Arr  
-  aliases  Artisan .... Illuminate\Support\Facades\Artisan  
-  aliases  Auth .......... Illuminate\Support\Facades\Auth  
-  aliases  Benchmark ........ Illuminate\Support\Benchmark  
-  aliases  Blade ........ Illuminate\Support\Facades\Blade  
-  aliases  Broadcast  Illuminate\Support\Facades\Broadcast  
-  aliases  Bus ............ Illuminate\Support\Facades\Bus  
-  aliases  Cache ........ Illuminate\Support\Facades\Cache  
-  aliases  Concurrency  Illuminate\Support\Facades\Concurrency  
-  aliases  Config ...... Illuminate\Support\Facades\Config  
-  aliases  Context .... Illuminate\Support\Facades\Context  
+  providers  20 ................................................................................. Illuminate\Translation\TranslationServiceProvider  
+  providers  21 ................................................................................... Illuminate\Validation\ValidationServiceProvider  
+  providers  22 ............................................................................................... Illuminate\View\ViewServiceProvider  
+  providers  23 .................................................................................................. App\Providers\AppServiceProvider  
+  aliases  App ..................................................................................................... Illuminate\Support\Facades\App  
+  aliases  Arr ............................................................................................................. Illuminate\Support\Arr  
+  aliases  Artisan ............................................................................................. Illuminate\Support\Facades\Artisan  
+  aliases  Auth ................................................................................................... Illuminate\Support\Facades\Auth  
+  aliases  Benchmark ................................................................................................. Illuminate\Support\Benchmark  
+  aliases  Blade ................................................................................................. Illuminate\Support\Facades\Blade  
+  aliases  Broadcast ......................................................................................... Illuminate\Support\Facades\Broadcast  
+  aliases  Bus ..................................................................................................... Illuminate\Support\Facades\Bus  
+  aliases  Cache ................................................................................................. Illuminate\Support\Facades\Cache  
+  aliases  Concurrency ..................................................................................... Illuminate\Support\Facades\Concurrency  
+  aliases  Config ............................................................................................... Illuminate\Support\Facades\Config  
+  aliases  Context ............................................................................................. Illuminate\Support\Facades\Context  
 ***REDACTED_LINE***
-  aliases  Crypt ........ Illuminate\Support\Facades\Crypt  
-  aliases  Date .......... Illuminate\Support\Facades\Date  
-  aliases  DB .............. Illuminate\Support\Facades\DB  
-  aliases  Eloquent ... Illuminate\Database\Eloquent\Model  
-  aliases  Event ........ Illuminate\Support\Facades\Event  
-  aliases  File .......... Illuminate\Support\Facades\File  
-  aliases  Gate .......... Illuminate\Support\Facades\Gate  
-  aliases  Hash .......... Illuminate\Support\Facades\Hash  
-  aliases  Http .......... Illuminate\Support\Facades\Http  
-  aliases  Js ...................... Illuminate\Support\Js  
-  aliases  Lang .......... Illuminate\Support\Facades\Lang  
-  aliases  Log ............ Illuminate\Support\Facades\Log  
-  aliases  Mail .......... Illuminate\Support\Facades\Mail  
-  aliases  Notification  Illuminate\Support\Facades\Notification  
-  aliases  Number .............. Illuminate\Support\Number  
+  aliases  Crypt ................................................................................................. Illuminate\Support\Facades\Crypt  
+  aliases  Date ................................................................................................... Illuminate\Support\Facades\Date  
+  aliases  DB ....................................................................................................... Illuminate\Support\Facades\DB  
+  aliases  Eloquent ............................................................................................ Illuminate\Database\Eloquent\Model  
+  aliases  Event ................................................................................................. Illuminate\Support\Facades\Event  
+  aliases  File ................................................................................................... Illuminate\Support\Facades\File  
+  aliases  Gate ................................................................................................... Illuminate\Support\Facades\Gate  
+  aliases  Hash ................................................................................................... Illuminate\Support\Facades\Hash  
+  aliases  Http ................................................................................................... Illuminate\Support\Facades\Http  
+  aliases  Js ............................................................................................................... Illuminate\Support\Js  
+  aliases  Lang ................................................................................................... Illuminate\Support\Facades\Lang  
+  aliases  Log ..................................................................................................... Illuminate\Support\Facades\Log  
+  aliases  Mail ................................................................................................... Illuminate\Support\Facades\Mail  
+  aliases  Notification ................................................................................... Illuminate\Support\Facades\Notification  
+  aliases  Number ....................................................................................................... Illuminate\Support\Number  
 ***REDACTED_LINE***
-  aliases  Process .... Illuminate\Support\Facades\Process  
-  aliases  Queue ........ Illuminate\Support\Facades\Queue  
-  aliases  RateLimiter  Illuminate\Support\Facades\RateLimiter  
-  aliases  Redirect .. Illuminate\Support\Facades\Redirect  
-  aliases  Request .... Illuminate\Support\Facades\Request  
-  aliases  Response .. Illuminate\Support\Facades\Response  
-  aliases  Route ........ Illuminate\Support\Facades\Route  
-  aliases  Schedule .. Illuminate\Support\Facades\Schedule  
-  aliases  Schema ...... Illuminate\Support\Facades\Schema  
+  aliases  Process ............................................................................................. Illuminate\Support\Facades\Process  
+  aliases  Queue ................................................................................................. Illuminate\Support\Facades\Queue  
+  aliases  RateLimiter ..................................................................................... Illuminate\Support\Facades\RateLimiter  
+  aliases  Redirect ........................................................................................... Illuminate\Support\Facades\Redirect  
+  aliases  Request ............................................................................................. Illuminate\Support\Facades\Request  
+  aliases  Response ........................................................................................... Illuminate\Support\Facades\Response  
+  aliases  Route ................................................................................................. Illuminate\Support\Facades\Route  
+  aliases  Schedule ........................................................................................... Illuminate\Support\Facades\Schedule  
+  aliases  Schema ............................................................................................... Illuminate\Support\Facades\Schema  
 ***REDACTED_LINE***
-  aliases  Storage .... Illuminate\Support\Facades\Storage  
-  aliases  Str .................... Illuminate\Support\Str  
-  aliases  Uri .................... Illuminate\Support\Uri  
-  aliases  URL ............ Illuminate\Support\Facades\URL  
-  aliases  Validator  Illuminate\Support\Facades\Validator  
-  aliases  View .......... Illuminate\Support\Facades\View  
-  aliases  Vite .......... Illuminate\Support\Facades\Vite  
+  aliases  Storage ............................................................................................. Illuminate\Support\Facades\Storage  
+  aliases  Str ............................................................................................................. Illuminate\Support\Str  
+  aliases  Uri ............................................................................................................. Illuminate\Support\Uri  
+  aliases  URL ..................................................................................................... Illuminate\Support\Facades\URL  
+  aliases  Validator ......................................................................................... Illuminate\Support\Facades\Validator  
+  aliases  View ................................................................................................... Illuminate\Support\Facades\View  
+  aliases  Vite ................................................................................................... Illuminate\Support\Facades\Vite  
 
 ```
 
@@ -1247,18 +1263,18 @@ Laravel Framework 12.48.1
 
 ```
 
-  auth ....................................................  
-  defaults  guard .................................... web  
-  defaults  passwords .............................. users  
+  auth .............................................................................................................................................  
+  defaults  guard ............................................................................................................................. web  
+  defaults  passwords ....................................................................................................................... users  
 ***REDACTED_LINE***
-  guards  web  provider ........................... users  
-  providers  users  driver ..................... eloquent  
-  providers  users  model ............... App\Models\User  
-  passwords  users  provider ...................... users  
-  passwords  users  table ......... password_reset_tokens  
-  passwords  users  expire ........................... 60  
-  passwords  users  throttle ......................... 60  
-  password_timeout .................................. 10800  
+  guards  web  provider .................................................................................................................... users  
+  providers  users  driver .............................................................................................................. eloquent  
+  providers  users  model ........................................................................................................ App\Models\User  
+  passwords  users  provider ............................................................................................................... users  
+  passwords  users  table .................................................................................................. password_reset_tokens  
+  passwords  users  expire .................................................................................................................... 60  
+  passwords  users  throttle .................................................................................................................. 60  
+  password_timeout ........................................................................................................................... 10800  
 
 ```
 
@@ -1266,42 +1282,42 @@ Laravel Framework 12.48.1
 
 ```
 
-  cache ...................................................  
-  default ........................................ database  
-  stores  array  driver ........................... array  
-  stores  array  serialize ........................ false  
+  cache ............................................................................................................................................  
+  default ................................................................................................................................. database  
+  stores  array  driver .................................................................................................................... array  
+  stores  array  serialize ................................................................................................................. false  
 ***REDACTED_LINE***
 ***REDACTED_LINE***
-  stores  database  driver ..................... database  
-  stores  database  connection ..................... null  
-  stores  database  table ......................... cache  
-  stores  database  lock_connection ................ null  
-  stores  database  lock_table ..................... null  
-  stores  file  driver ............................. file  
-  stores  file  path  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\framework/cache/data  
-  stores  file  lock_path  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\framework/cache/data  
-  stores  memcached  driver ................... memcached  
-  stores  memcached  persistent_id ................. null  
-  stores  memcached  sasl  0 ...................... null  
-  stores  memcached  sasl  1 ...................... null  
-  stores  memcached  options ......................... []  
-  stores  memcached  servers  0  host ....... 127.0.0.1  
-  stores  memcached  servers  0  port ........... 11211  
-  stores  memcached  servers  0  weight ........... 100  
-  stores  redis  driver ........................... redis  
-  stores  redis  connection ....................... cache  
-  stores  redis  lock_connection ................ default  
-  stores  dynamodb  driver ..................... dynamodb  
+  stores  database  driver .............................................................................................................. database  
+  stores  database  connection .............................................................................................................. null  
+  stores  database  table .................................................................................................................. cache  
+  stores  database  lock_connection ......................................................................................................... null  
+  stores  database  lock_table .............................................................................................................. null  
+  stores  file  driver ...................................................................................................................... file  
+  stores  file  path .................................... C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\framework/cache/data  
+  stores  file  lock_path ............................... C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\framework/cache/data  
+  stores  memcached  driver ............................................................................................................ memcached  
+  stores  memcached  persistent_id .......................................................................................................... null  
+  stores  memcached  sasl  0 ............................................................................................................... null  
+  stores  memcached  sasl  1 ............................................................................................................... null  
+  stores  memcached  options .................................................................................................................. []  
+  stores  memcached  servers  0  host ................................................................................................ 127.0.0.1  
+  stores  memcached  servers  0  port .................................................................................................... 11211  
+  stores  memcached  servers  0  weight .................................................................................................... 100  
+  stores  redis  driver .................................................................................................................... redis  
+  stores  redis  connection ................................................................................................................ cache  
+  stores  redis  lock_connection ......................................................................................................... default  
+  stores  dynamodb  driver .............................................................................................................. dynamodb  
 ***REDACTED_LINE***
 ***REDACTED_LINE***
-  stores  dynamodb  region .................... us-east-1  
-  stores  dynamodb  table ......................... cache  
-  stores  dynamodb  endpoint ....................... null  
-  stores  octane  driver ......................... octane  
-  stores  failover  driver ..................... failover  
-  stores  failover  stores  0 ................. database  
-  stores  failover  stores  1 .................... array  
-  prefix ................................... laravel-cache-  
+  stores  dynamodb  region ............................................................................................................. us-east-1  
+  stores  dynamodb  table .................................................................................................................. cache  
+  stores  dynamodb  endpoint ................................................................................................................ null  
+  stores  octane  driver .................................................................................................................. octane  
+  stores  failover  driver .............................................................................................................. failover  
+  stores  failover  stores  0 .......................................................................................................... database  
+  stores  failover  stores  1 ............................................................................................................. array  
+  prefix ............................................................................................................................ laravel-cache-  
 
 ```
 
@@ -1309,95 +1325,95 @@ Laravel Framework 12.48.1
 
 ```
 
-  database ................................................  
-  default .......................................... sqlite  
-  connections  sqlite  driver .................... sqlite  
-  connections  sqlite  url ......................... null  
-  connections  sqlite  database  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\database\database.sqlite  
-  connections  sqlite  prefix ...........................  
-  connections  sqlite  foreign_key_constraints ..... true  
-  connections  sqlite  busy_timeout ................ null  
-  connections  sqlite  journal_mode ................ null  
-  connections  sqlite  synchronous ................. null  
-  connections  sqlite  transaction_mode ........ DEFERRED  
-  connections  mysql  driver ...................... mysql  
-  connections  mysql  url .......................... null  
-  connections  mysql  host .................... 127.0.0.1  
-  connections  mysql  port ......................... 3306  
-  connections  mysql  database .................. laravel  
-  connections  mysql  username ..................... root  
+  database .........................................................................................................................................  
+  default ................................................................................................................................... sqlite  
+  connections  sqlite  driver ............................................................................................................. sqlite  
+  connections  sqlite  url .................................................................................................................. null  
+  connections  sqlite  database ............................. C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\database\database.sqlite  
+  connections  sqlite  prefix ....................................................................................................................  
+  connections  sqlite  foreign_key_constraints .............................................................................................. true  
+  connections  sqlite  busy_timeout ......................................................................................................... null  
+  connections  sqlite  journal_mode ......................................................................................................... null  
+  connections  sqlite  synchronous .......................................................................................................... null  
+  connections  sqlite  transaction_mode ................................................................................................. DEFERRED  
+  connections  mysql  driver ............................................................................................................... mysql  
+  connections  mysql  url ................................................................................................................... null  
+  connections  mysql  host ............................................................................................................. 127.0.0.1  
+  connections  mysql  port .................................................................................................................. 3306  
+  connections  mysql  database ........................................................................................................... laravel  
+  connections  mysql  username .............................................................................................................. root  
 ***REDACTED_LINE***
-  connections  mysql  unix_socket .......................  
-  connections  mysql  charset ................... utf8mb4  
-  connections  mysql  collation ...... utf8mb4_unicode_ci  
-  connections  mysql  prefix ............................  
-  connections  mysql  prefix_indexes ............... true  
-  connections  mysql  strict ....................... true  
-  connections  mysql  engine ....................... null  
-  connections  mysql  options ........................ []  
-  connections  mariadb  driver .................. mariadb  
-  connections  mariadb  url ........................ null  
-  connections  mariadb  host .................. 127.0.0.1  
-  connections  mariadb  port ....................... 3306  
-  connections  mariadb  database ................ laravel  
-  connections  mariadb  username ................... root  
+  connections  mysql  unix_socket ................................................................................................................  
+  connections  mysql  charset ............................................................................................................ utf8mb4  
+  connections  mysql  collation ............................................................................................... utf8mb4_unicode_ci  
+  connections  mysql  prefix .....................................................................................................................  
+  connections  mysql  prefix_indexes ........................................................................................................ true  
+  connections  mysql  strict ................................................................................................................ true  
+  connections  mysql  engine ................................................................................................................ null  
+  connections  mysql  options ................................................................................................................. []  
+  connections  mariadb  driver ........................................................................................................... mariadb  
+  connections  mariadb  url ................................................................................................................. null  
+  connections  mariadb  host ........................................................................................................... 127.0.0.1  
+  connections  mariadb  port ................................................................................................................ 3306  
+  connections  mariadb  database ......................................................................................................... laravel  
+  connections  mariadb  username ............................................................................................................ root  
 ***REDACTED_LINE***
-  connections  mariadb  unix_socket .....................  
-  connections  mariadb  charset ................. utf8mb4  
-  connections  mariadb  collation .... utf8mb4_unicode_ci  
-  connections  mariadb  prefix ..........................  
-  connections  mariadb  prefix_indexes ............. true  
-  connections  mariadb  strict ..................... true  
-  connections  mariadb  engine ..................... null  
-  connections  mariadb  options ...................... []  
-  connections  pgsql  driver ...................... pgsql  
-  connections  pgsql  url .......................... null  
-  connections  pgsql  host .................... 127.0.0.1  
-  connections  pgsql  port ......................... 5432  
-  connections  pgsql  database .................. laravel  
-  connections  pgsql  username ..................... root  
+  connections  mariadb  unix_socket ..............................................................................................................  
+  connections  mariadb  charset .......................................................................................................... utf8mb4  
+  connections  mariadb  collation ............................................................................................. utf8mb4_unicode_ci  
+  connections  mariadb  prefix ...................................................................................................................  
+  connections  mariadb  prefix_indexes ...................................................................................................... true  
+  connections  mariadb  strict .............................................................................................................. true  
+  connections  mariadb  engine .............................................................................................................. null  
+  connections  mariadb  options ............................................................................................................... []  
+  connections  pgsql  driver ............................................................................................................... pgsql  
+  connections  pgsql  url ................................................................................................................... null  
+  connections  pgsql  host ............................................................................................................. 127.0.0.1  
+  connections  pgsql  port .................................................................................................................. 5432  
+  connections  pgsql  database ........................................................................................................... laravel  
+  connections  pgsql  username .............................................................................................................. root  
 ***REDACTED_LINE***
-  connections  pgsql  charset ...................... utf8  
-  connections  pgsql  prefix ............................  
-  connections  pgsql  prefix_indexes ............... true  
-  connections  pgsql  search_path ................ public  
-  connections  pgsql  sslmode .................... prefer  
-  connections  sqlsrv  driver .................... sqlsrv  
-  connections  sqlsrv  url ......................... null  
-  connections  sqlsrv  host ................... localhost  
-  connections  sqlsrv  port ........................ 1433  
-  connections  sqlsrv  database ................. laravel  
-  connections  sqlsrv  username .................... root  
+  connections  pgsql  charset ............................................................................................................... utf8  
+  connections  pgsql  prefix .....................................................................................................................  
+  connections  pgsql  prefix_indexes ........................................................................................................ true  
+  connections  pgsql  search_path ......................................................................................................... public  
+  connections  pgsql  sslmode ............................................................................................................. prefer  
+  connections  sqlsrv  driver ............................................................................................................. sqlsrv  
+  connections  sqlsrv  url .................................................................................................................. null  
+  connections  sqlsrv  host ............................................................................................................ localhost  
+  connections  sqlsrv  port ................................................................................................................. 1433  
+  connections  sqlsrv  database .......................................................................................................... laravel  
+  connections  sqlsrv  username ............................................................................................................. root  
 ***REDACTED_LINE***
-  connections  sqlsrv  charset ..................... utf8  
-  connections  sqlsrv  prefix ...........................  
-  connections  sqlsrv  prefix_indexes .............. true  
-  migrations  table ........................... migrations  
-  migrations  update_date_on_publish ................ true  
-  redis  client ................................. phpredis  
-  redis  options  cluster ......................... redis  
-  redis  options  prefix .............. laravel-database-  
-  redis  options  persistent ...................... false  
-  redis  default  url .............................. null  
-  redis  default  host ........................ 127.0.0.1  
-  redis  default  username ......................... null  
+  connections  sqlsrv  charset .............................................................................................................. utf8  
+  connections  sqlsrv  prefix ....................................................................................................................  
+  connections  sqlsrv  prefix_indexes ....................................................................................................... true  
+  migrations  table .................................................................................................................... migrations  
+  migrations  update_date_on_publish ......................................................................................................... true  
+  redis  client .......................................................................................................................... phpredis  
+  redis  options  cluster .................................................................................................................. redis  
+  redis  options  prefix ....................................................................................................... laravel-database-  
+  redis  options  persistent ............................................................................................................... false  
+  redis  default  url ....................................................................................................................... null  
+  redis  default  host ................................................................................................................. 127.0.0.1  
+  redis  default  username .................................................................................................................. null  
 ***REDACTED_LINE***
-  redis  default  port ............................. 6379  
-  redis  default  database ............................ 0  
-  redis  default  max_retries ......................... 3  
-  redis  default  backoff_algorithm . decorrelated_jitter  
-  redis  default  backoff_base ...................... 100  
-  redis  default  backoff_cap ...................... 1000  
-  redis  cache  url ................................ null  
-  redis  cache  host .......................... 127.0.0.1  
-  redis  cache  username ........................... null  
+  redis  default  port ...................................................................................................................... 6379  
+  redis  default  database ..................................................................................................................... 0  
+  redis  default  max_retries .................................................................................................................. 3  
+  redis  default  backoff_algorithm .......................................................................................... decorrelated_jitter  
+  redis  default  backoff_base ............................................................................................................... 100  
+  redis  default  backoff_cap ............................................................................................................... 1000  
+  redis  cache  url ......................................................................................................................... null  
+  redis  cache  host ................................................................................................................... 127.0.0.1  
+  redis  cache  username .................................................................................................................... null  
 ***REDACTED_LINE***
-  redis  cache  port ............................... 6379  
-  redis  cache  database .............................. 1  
-  redis  cache  max_retries ........................... 3  
-  redis  cache  backoff_algorithm ... decorrelated_jitter  
-  redis  cache  backoff_base ........................ 100  
-  redis  cache  backoff_cap ........................ 1000  
+  redis  cache  port ........................................................................................................................ 6379  
+  redis  cache  database ....................................................................................................................... 1  
+  redis  cache  max_retries .................................................................................................................... 3  
+  redis  cache  backoff_algorithm ............................................................................................ decorrelated_jitter  
+  redis  cache  backoff_base ................................................................................................................. 100  
+  redis  cache  backoff_cap ................................................................................................................. 1000  
 
 ```
 
@@ -1405,29 +1421,29 @@ Laravel Framework 12.48.1
 
 ```
 
-  filesystems .............................................  
-  default ........................................... local  
-  disks  local  driver ............................ local  
-  disks  local  root  C: ***REDACTED***
-  disks  local  serve .............................. true  
-  disks  local  throw ............................. false  
-  disks  local  report ............................ false  
-  disks  public  driver ........................... local  
-  disks  public  root  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\app/public  
-  disks  public  url ........... http://localhost/storage  
-  disks  public  visibility ...................... public  
-  disks  public  throw ............................ false  
-  disks  public  report ........................... false  
-  disks  s3  driver .................................. s3  
+  filesystems ......................................................................................................................................  
+  default .................................................................................................................................... local  
+  disks  local  driver ..................................................................................................................... local  
+  disks  local  root ............................................. C: ***REDACTED***
+  disks  local  serve ....................................................................................................................... true  
+  disks  local  throw ...................................................................................................................... false  
+  disks  local  report ..................................................................................................................... false  
+  disks  public  driver .................................................................................................................... local  
+  disks  public  root ............................................. C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\app/public  
+  disks  public  url .................................................................................................... http://localhost/storage  
+  disks  public  visibility ............................................................................................................... public  
+  disks  public  throw ..................................................................................................................... false  
+  disks  public  report .................................................................................................................... false  
+  disks  s3  driver ........................................................................................................................... s3  
 ***REDACTED_LINE***
 ***REDACTED_LINE***
-  disks  s3  region ........................... us-east-1  
-  disks  s3  bucket .....................................  
-  disks  s3  url ................................... null  
-  disks  s3  endpoint .............................. null  
-  disks  s3  use_path_style_endpoint .............. false  
-  disks  s3  throw ................................ false  
-  disks  s3  report ............................... false  
+  disks  s3  region .................................................................................................................... us-east-1  
+  disks  s3  bucket ..............................................................................................................................  
+  disks  s3  url ............................................................................................................................ null  
+  disks  s3  endpoint ....................................................................................................................... null  
+  disks  s3  use_path_style_endpoint ....................................................................................................... false  
+  disks  s3  throw ......................................................................................................................... false  
+  disks  s3  report ........................................................................................................................ false  
   links  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\public\storage  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\app/public  
 
 ```
@@ -1436,51 +1452,51 @@ Laravel Framework 12.48.1
 
 ```
 
-  logging .................................................  
-  default ........................................... stack  
-  deprecations  channel ............................. null  
-  deprecations  trace .............................. false  
-  channels  stack  driver ......................... stack  
-  channels  stack  channels  0 .................. single  
-  channels  stack  ignore_exceptions .............. false  
-  channels  single  driver ....................... single  
-  channels  single  path  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\logs/laravel.log  
-  channels  single  level ......................... debug  
-  channels  single  replace_placeholders ........... true  
-  channels  daily  driver ......................... daily  
-  channels  daily  path  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\logs/laravel.log  
-  channels  daily  level .......................... debug  
-  channels  daily  days .............................. 14  
-  channels  daily  replace_placeholders ............ true  
-  channels  slack  driver ......................... slack  
-  channels  slack  url ............................. null  
-  channels  slack  username ................. Laravel Log  
-  channels  slack  emoji .......................... :boom  
-  channels  slack  level .......................... debug  
-  channels  slack  replace_placeholders ............ true  
-  channels  papertrail  driver .................. monolog  
-  channels  papertrail  level ..................... debug  
-  channels  papertrail  handler  Monolog\Handler\SyslogUdpHandler  
-  channels  papertrail  handler_with  host ........ null  
-  channels  papertrail  handler_with  port ........ null  
-  channels  papertrail  handler_with  connectionString  tls://  
-  channels  papertrail  processors  0  Monolog\Processor\PsrLogMessageProcessor  
-  channels  stderr  driver ...................... monolog  
-  channels  stderr  level ......................... debug  
-  channels  stderr  handler  Monolog\Handler\StreamHandler  
-  channels  stderr  handler_with  stream .. php://stderr  
-  channels  stderr  formatter ...................... null  
-  channels  stderr  processors  0  Monolog\Processor\PsrLogMessageProcessor  
-  channels  syslog  driver ....................... syslog  
-  channels  syslog  level ......................... debug  
-  channels  syslog  facility .......................... 8  
-  channels  syslog  replace_placeholders ........... true  
-  channels  errorlog  driver ................... errorlog  
-  channels  errorlog  level ....................... debug  
-  channels  errorlog  replace_placeholders ......... true  
-  channels  null  driver ........................ monolog  
-  channels  null  handler ... Monolog\Handler\NullHandler  
-  channels  emergency  path  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\logs/laravel.log  
+  logging ..........................................................................................................................................  
+  default .................................................................................................................................... stack  
+  deprecations  channel ...................................................................................................................... null  
+  deprecations  trace ....................................................................................................................... false  
+  channels  stack  driver .................................................................................................................. stack  
+  channels  stack  channels  0 ........................................................................................................... single  
+  channels  stack  ignore_exceptions ....................................................................................................... false  
+  channels  single  driver ................................................................................................................ single  
+  channels  single  path .................................... C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\logs/laravel.log  
+  channels  single  level .................................................................................................................. debug  
+  channels  single  replace_placeholders .................................................................................................... true  
+  channels  daily  driver .................................................................................................................. daily  
+  channels  daily  path ..................................... C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\logs/laravel.log  
+  channels  daily  level ................................................................................................................... debug  
+  channels  daily  days ....................................................................................................................... 14  
+  channels  daily  replace_placeholders ..................................................................................................... true  
+  channels  slack  driver .................................................................................................................. slack  
+  channels  slack  url ...................................................................................................................... null  
+  channels  slack  username .......................................................................................................... Laravel Log  
+  channels  slack  emoji ................................................................................................................... :boom  
+  channels  slack  level ................................................................................................................... debug  
+  channels  slack  replace_placeholders ..................................................................................................... true  
+  channels  papertrail  driver ........................................................................................................... monolog  
+  channels  papertrail  level .............................................................................................................. debug  
+  channels  papertrail  handler ................................................................................. Monolog\Handler\SyslogUdpHandler  
+  channels  papertrail  handler_with  host ................................................................................................. null  
+  channels  papertrail  handler_with  port ................................................................................................. null  
+  channels  papertrail  handler_with  connectionString ................................................................................... tls://  
+  channels  papertrail  processors  0 .................................................................. Monolog\Processor\PsrLogMessageProcessor  
+  channels  stderr  driver ............................................................................................................... monolog  
+  channels  stderr  level .................................................................................................................. debug  
+  channels  stderr  handler ........................................................................................ Monolog\Handler\StreamHandler  
+  channels  stderr  handler_with  stream ........................................................................................... php://stderr  
+  channels  stderr  formatter ............................................................................................................... null  
+  channels  stderr  processors  0 ...................................................................... Monolog\Processor\PsrLogMessageProcessor  
+  channels  syslog  driver ................................................................................................................ syslog  
+  channels  syslog  level .................................................................................................................. debug  
+  channels  syslog  facility ................................................................................................................... 8  
+  channels  syslog  replace_placeholders .................................................................................................... true  
+  channels  errorlog  driver ............................................................................................................ errorlog  
+  channels  errorlog  level ................................................................................................................ debug  
+  channels  errorlog  replace_placeholders .................................................................................................. true  
+  channels  null  driver ................................................................................................................. monolog  
+  channels  null  handler ............................................................................................ Monolog\Handler\NullHandler  
+  channels  emergency  path ................................. C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\logs/laravel.log  
 
 ```
 
@@ -1488,37 +1504,37 @@ Laravel Framework 12.48.1
 
 ```
 
-  mail ....................................................  
-  default ............................................. log  
-  mailers  smtp  transport ......................... smtp  
-  mailers  smtp  scheme ............................ null  
-  mailers  smtp  url ............................... null  
-  mailers  smtp  host ......................... 127.0.0.1  
-  mailers  smtp  port .............................. 2525  
-  mailers  smtp  username .......................... null  
+  mail .............................................................................................................................................  
+  default ...................................................................................................................................... log  
+  mailers  smtp  transport .................................................................................................................. smtp  
+  mailers  smtp  scheme ..................................................................................................................... null  
+  mailers  smtp  url ........................................................................................................................ null  
+  mailers  smtp  host .................................................................................................................. 127.0.0.1  
+  mailers  smtp  port ....................................................................................................................... 2525  
+  mailers  smtp  username ................................................................................................................... null  
 ***REDACTED_LINE***
-  mailers  smtp  timeout ........................... null  
-  mailers  smtp  local_domain ................. localhost  
-  mailers  ses  transport ........................... ses  
-  mailers  postmark  transport ................. postmark  
-  mailers  resend  transport ..................... resend  
-  mailers  sendmail  transport ................. sendmail  
-  mailers  sendmail  path ..... /usr/sbin/sendmail -bs -i  
-  mailers  log  transport ........................... log  
-  mailers  log  channel ............................ null  
-  mailers  array  transport ....................... array  
-  mailers  failover  transport ................. failover  
-  mailers  failover  mailers  0 ................... smtp  
-  mailers  failover  mailers  1 .................... log  
-  mailers  failover  retry_after ..................... 60  
-  mailers  roundrobin  transport ............. roundrobin  
-  mailers  roundrobin  mailers  0 .................. ses  
-  mailers  roundrobin  mailers  1 ............. postmark  
-  mailers  roundrobin  retry_after ................... 60  
-  from  address ........................ hello@example.com  
-  from  name ..................................... Laravel  
-  markdown  theme ................................ default  
-  markdown  paths  0  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\resources\views/vendor/mail  
+  mailers  smtp  timeout .................................................................................................................... null  
+  mailers  smtp  local_domain .......................................................................................................... localhost  
+  mailers  ses  transport .................................................................................................................... ses  
+  mailers  postmark  transport .......................................................................................................... postmark  
+  mailers  resend  transport .............................................................................................................. resend  
+  mailers  sendmail  transport .......................................................................................................... sendmail  
+  mailers  sendmail  path .............................................................................................. /usr/sbin/sendmail -bs -i  
+  mailers  log  transport .................................................................................................................... log  
+  mailers  log  channel ..................................................................................................................... null  
+  mailers  array  transport ................................................................................................................ array  
+  mailers  failover  transport .......................................................................................................... failover  
+  mailers  failover  mailers  0 ............................................................................................................ smtp  
+  mailers  failover  mailers  1 ............................................................................................................. log  
+  mailers  failover  retry_after .............................................................................................................. 60  
+  mailers  roundrobin  transport ...................................................................................................... roundrobin  
+  mailers  roundrobin  mailers  0 ........................................................................................................... ses  
+  mailers  roundrobin  mailers  1 ...................................................................................................... postmark  
+  mailers  roundrobin  retry_after ............................................................................................................ 60  
+  from  address ................................................................................................................. hello@example.com  
+  from  name .............................................................................................................................. Laravel  
+  markdown  theme ......................................................................................................................... default  
+  markdown  paths  0 ..................................... C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\resources\views/vendor/mail  
 
 ```
 
@@ -1526,45 +1542,45 @@ Laravel Framework 12.48.1
 
 ```
 
-  queue ...................................................  
-  default ........................................ database  
-  connections  sync  driver ........................ sync  
-  connections  database  driver ................ database  
-  connections  database  connection ................ null  
-  connections  database  table ..................... jobs  
-  connections  database  queue .................. default  
-  connections  database  retry_after ................. 90  
-  connections  database  after_commit ............. false  
-  connections  beanstalkd  driver ............ beanstalkd  
-  connections  beanstalkd  host ............... localhost  
-  connections  beanstalkd  queue ................ default  
-  connections  beanstalkd  retry_after ............... 90  
-  connections  beanstalkd  block_for .................. 0  
-  connections  beanstalkd  after_commit ........... false  
-  connections  sqs  driver .......................... sqs  
+  queue ............................................................................................................................................  
+  default ................................................................................................................................. database  
+  connections  sync  driver ................................................................................................................. sync  
+  connections  database  driver ......................................................................................................... database  
+  connections  database  connection ......................................................................................................... null  
+  connections  database  table .............................................................................................................. jobs  
+  connections  database  queue ........................................................................................................... default  
+  connections  database  retry_after .......................................................................................................... 90  
+  connections  database  after_commit ...................................................................................................... false  
+  connections  beanstalkd  driver ..................................................................................................... beanstalkd  
+  connections  beanstalkd  host ........................................................................................................ localhost  
+  connections  beanstalkd  queue ......................................................................................................... default  
+  connections  beanstalkd  retry_after ........................................................................................................ 90  
+  connections  beanstalkd  block_for ........................................................................................................... 0  
+  connections  beanstalkd  after_commit .................................................................................................... false  
+  connections  sqs  driver ................................................................................................................... sqs  
 ***REDACTED_LINE***
 ***REDACTED_LINE***
-  connections  sqs  prefix  https://sqs.us-east-1.amazonaws.com/your-account-id  
-  connections  sqs  queue ....................... default  
-  connections  sqs  suffix ......................... null  
-  connections  sqs  region .................... us-east-1  
-  connections  sqs  after_commit .................. false  
-  connections  redis  driver ...................... redis  
-  connections  redis  connection ................ default  
-  connections  redis  queue ..................... default  
-  connections  redis  retry_after .................... 90  
-  connections  redis  block_for .................... null  
-  connections  redis  after_commit ................ false  
-  connections  deferred  driver ................ deferred  
-  connections  failover  driver ................ failover  
-  connections  failover  connections  0 ....... database  
-  connections  failover  connections  1 ....... deferred  
-  connections  background  driver ............ background  
-  batching  database .............................. sqlite  
-  batching  table ............................ job_batches  
-  failed  driver .......................... database-uuids  
-  failed  database ................................ sqlite  
-  failed  table .............................. failed_jobs  
+  connections  sqs  prefix ................................................................... https://sqs.us-east-1.amazonaws.com/your-account-id  
+  connections  sqs  queue ................................................................................................................ default  
+  connections  sqs  suffix .................................................................................................................. null  
+  connections  sqs  region ............................................................................................................. us-east-1  
+  connections  sqs  after_commit ........................................................................................................... false  
+  connections  redis  driver ............................................................................................................... redis  
+  connections  redis  connection ......................................................................................................... default  
+  connections  redis  queue .............................................................................................................. default  
+  connections  redis  retry_after ............................................................................................................. 90  
+  connections  redis  block_for ............................................................................................................. null  
+  connections  redis  after_commit ......................................................................................................... false  
+  connections  deferred  driver ......................................................................................................... deferred  
+  connections  failover  driver ......................................................................................................... failover  
+  connections  failover  connections  0 ................................................................................................ database  
+  connections  failover  connections  1 ................................................................................................ deferred  
+  connections  background  driver ..................................................................................................... background  
+  batching  database ....................................................................................................................... sqlite  
+  batching  table ..................................................................................................................... job_batches  
+  failed  driver ................................................................................................................... database-uuids  
+  failed  database ......................................................................................................................... sqlite  
+  failed  table ....................................................................................................................... failed_jobs  
 
 ```
 
@@ -1572,14 +1588,14 @@ Laravel Framework 12.48.1
 
 ```
 
-  services ................................................  
+  services .........................................................................................................................................  
 ***REDACTED_LINE***
 ***REDACTED_LINE***
 ***REDACTED_LINE***
 ***REDACTED_LINE***
-  ses  region .................................. us-east-1  
-  slack  notifications  bot_user_oauth_token ....... null  
-  slack  notifications  channel .................... null  
+  ses  region ........................................................................................................................... us-east-1  
+  slack  notifications  bot_user_oauth_token ................................................................................................ null  
+  slack  notifications  channel ............................................................................................................. null  
 
 ```
 
@@ -1588,23 +1604,23 @@ Laravel Framework 12.48.1
 ```
 
 ***REDACTED_LINE***
-  driver ......................................... database  
-  lifetime ............................................ 120  
-  expire_on_close ................................... false  
-  encrypt ........................................... false  
-  files  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\framework/sessions  
-  connection ......................................... null  
-  table .......................................... sessions  
-  store .............................................. null  
-  lottery  0 ........................................... 2  
-  lottery  1 ......................................... 100  
+  driver .................................................................................................................................. database  
+  lifetime ..................................................................................................................................... 120  
+  expire_on_close ............................................................................................................................ false  
+  encrypt .................................................................................................................................... false  
+  files ..................................................... C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\storage\framework/sessions  
+  connection .................................................................................................................................. null  
+  table ................................................................................................................................... sessions  
+  store ....................................................................................................................................... null  
+  lottery  0 .................................................................................................................................... 2  
+  lottery  1 .................................................................................................................................. 100  
 ***REDACTED_LINE***
-  path .................................................. /  
-  domain ............................................. null  
-  secure ............................................. null  
-  http_only .......................................... true  
-  same_site ........................................... lax  
-  partitioned ....................................... false  
+  path ........................................................................................................................................... /  
+  domain ...................................................................................................................................... null  
+  secure ...................................................................................................................................... null  
+  http_only ................................................................................................................................... true  
+  same_site .................................................................................................................................... lax  
+  partitioned ................................................................................................................................ false  
 
 ```
 
@@ -1612,55 +1628,55 @@ Laravel Framework 12.48.1
 
 ```
 
-  GET|HEAD        / ....................................... 
-  GET|HEAD        confirm-password password.confirm  Auth
-  POST            confirm-password Auth\ConfirmablePasswor
-  GET|HEAD        dashboard dashboard  DashboardController
-  POST            email/verification-notification verifica
-  GET|HEAD        f/{family}/bills family.bills.index  Fa
-  POST            f/{family}/bills family.bills.store  Fa
-  GET|HEAD        f/{family}/bills/create family.bills.cre
-  PUT             f/{family}/bills/{bill} family.bills.upd
-  DELETE          f/{family}/bills/{bill} family.bills.des
-  GET|HEAD        f/{family}/bills/{bill}/edit family.bill
-  POST            f/{family}/bills/{bill}/toggle-active fa
-  GET|HEAD        f/{family}/dashboard family.dashboard  
-  GET|HEAD        f/{family}/incomes incomes.index  Famil
-  POST            f/{family}/incomes incomes.store  Famil
-  PUT|PATCH       f/{family}/incomes/{income} incomes.upda
-  DELETE          f/{family}/incomes/{income} incomes.dest
-  GET|HEAD        f/{family}/members family.members.index 
-  POST            f/{family}/members family.members.store 
-  PUT             f/{family}/members/{member} family.membe
-  DELETE          f/{family}/members/{member} family.membe
-  GET|HEAD        f/{family}/ping ......................... 
-  GET|HEAD        f/{family}/planpag family.planpag  Fami
-  POST            f/{family}/planpag/{occurrence}/mark-paid family.planpag.markPaid  FamilyPlanpagActionsController@markPa
-  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmark
-  GET|HEAD        f/{family}/taxonomia family.taxonomy  T
-  POST            families families.store  FamilyControll
-  POST            families/{family}/activate families.acti
-  GET|HEAD        forgot-password password.request  Auth\
-  POST            forgot-password password.email  Auth\Pa
-  GET|HEAD        login login  Auth\AuthenticatedSessionC
-  POST            login Auth\AuthenticatedSessionControlle
-  POST            logout logout  Auth\AuthenticatedSessio
-  PUT             password password.update  Auth\Password
-  GET|HEAD        planpag ......... PlanpagController@index
-  GET|HEAD        profile profile.edit  ProfileController
-  PATCH           profile profile.update  ProfileControll
-  DELETE          profile profile.destroy  ProfileControl
-  GET|HEAD        register register  Auth\RegisteredUserC
-  POST            register Auth\RegisteredUserController@s
-  POST            reset-password password.store  Auth\New
-  GET|HEAD        reset-password/{token} password.reset  
-  GET|HEAD        storage/{path} ............ storage.local
-  GET|HEAD        taxonomia ...... TaxonomyController@index
-  GET|HEAD        up ...................................... 
-  GET|HEAD        verify-email verification.notice  Auth\
-  GET|HEAD        verify-email/{id}/{hash} verification.ve
+  GET|HEAD        / ...................................................................................................................................... 
+  GET|HEAD        confirm-password ............................................................ password.confirm  Auth\ConfirmablePasswordController@show
+  POST            confirm-password .............................................................................. Auth\ConfirmablePasswordController@store
+  GET|HEAD        dashboard .............................................................................................. dashboard  DashboardController
+  POST            email/verification-notification ................................. verification.send  Auth\EmailVerificationNotificationController@store
+  GET|HEAD        f/{family}/bills ...................................................................... family.bills.index  FamilyBillsController@index
+  POST            f/{family}/bills ...................................................................... family.bills.store  FamilyBillsController@store
+  GET|HEAD        f/{family}/bills/create ............................................................. family.bills.create  FamilyBillsController@create
+  PUT             f/{family}/bills/{bill} ............................................................. family.bills.update  FamilyBillsController@update
+  DELETE          f/{family}/bills/{bill} ........................................................... family.bills.destroy  FamilyBillsController@destroy
+  GET|HEAD        f/{family}/bills/{bill}/edit ............................................................ family.bills.edit  FamilyBillsController@edit
+  POST            f/{family}/bills/{bill}/toggle-active ................................... family.bills.toggleActive  FamilyBillsController@toggleActive
+  GET|HEAD        f/{family}/dashboard ................................................................ family.dashboard  FamilyDashboardController@index
+  GET|HEAD        f/{family}/incomes ....................................................................... incomes.index  FamilyIncomesController@index
+  POST            f/{family}/incomes ....................................................................... incomes.store  FamilyIncomesController@store
+  PUT|PATCH       f/{family}/incomes/{income} ............................................................ incomes.update  FamilyIncomesController@update
+  DELETE          f/{family}/incomes/{income} .......................................................... incomes.destroy  FamilyIncomesController@destroy
+  GET|HEAD        f/{family}/members ................................................................ family.members.index  FamilyMembersController@index
+  POST            f/{family}/members ................................................................ family.members.store  FamilyMembersController@store
+  PUT             f/{family}/members/{member} ..................................................... family.members.update  FamilyMembersController@update
+  DELETE          f/{family}/members/{member} ................................................... family.members.destroy  FamilyMembersController@destroy
+  GET|HEAD        f/{family}/ping ........................................................................................................................ 
+  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag  FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        f/{family}/taxonomia ........................................................................ family.taxonomy  TaxonomyController@index
+  POST            families ....................................................................................... families.store  FamilyController@store
+  POST            families/{family}/activate ............................................................... families.activate  FamilyController@activate
+  GET|HEAD        forgot-password ............................................................. password.request  Auth\PasswordResetLinkController@create
+  POST            forgot-password ................................................................ password.email  Auth\PasswordResetLinkController@store
+  GET|HEAD        login ............................................................................... login  Auth\AuthenticatedSessionController@create
+  POST            login ........................................................................................ Auth\AuthenticatedSessionController@store
+  POST            logout ............................................................................ logout  Auth\AuthenticatedSessionController@destroy
+  PUT             password .............................................................................. password.update  Auth\PasswordController@update
+  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
+  GET|HEAD        profile .......................................................................................... profile.edit  ProfileController@edit
+  PATCH           profile ...................................................................................... profile.update  ProfileController@update
+  DELETE          profile .................................................................................... profile.destroy  ProfileController@destroy
+  GET|HEAD        register ............................................................................... register  Auth\RegisteredUserController@create
+  POST            register ........................................................................................... Auth\RegisteredUserController@store
+  POST            reset-password ....................................................................... password.store  Auth\NewPasswordController@store
+  GET|HEAD        reset-password/{token} .............................................................. password.reset  Auth\NewPasswordController@create
+  GET|HEAD        storage/{path} ........................................................................................................... storage.local
+  GET|HEAD        taxonomia ..................................................................................................... TaxonomyController@index
+  GET|HEAD        up ..................................................................................................................................... 
+  GET|HEAD        verify-email .............................................................. verification.notice  Auth\EmailVerificationPromptController
+  GET|HEAD        verify-email/{id}/{hash} .............................................................. verification.verify  Auth\VerifyEmailController
 
-                                        Showing [47] routes
+                                                                                                                                       Showing [47] routes
 
 ```
 
@@ -1668,26 +1684,26 @@ Laravel Framework 12.48.1
 
 ```
 
-  Illuminate\Auth\Events\Registered .......................  
+  Illuminate\Auth\Events\Registered ................................................................................................................  
   OK Illuminate\Auth\Listeners\SendEmailVerificationNotification  
-  Illuminate\Console\Events\CommandFinished ...............  
+  Illuminate\Console\Events\CommandFinished ........................................................................................................  
   OK Closure at: /vendor/laravel/framework/src/Illuminate/Foundation/Providers/FoundationServiceProvider.php:213  
-  Illuminate\Console\Events\CommandStarting ...............  
+  Illuminate\Console\Events\CommandStarting ........................................................................................................  
   OK Closure at: /vendor/laravel/pail/src/PailServiceProvider.php:52  
-  Illuminate\Database\Events\QueryExecuted ................  
+  Illuminate\Database\Events\QueryExecuted .........................................................................................................  
   OK Closure at: /vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Renderer/Listener.php:60  
-  Illuminate\Foundation\Events\LocaleUpdated ..............  
+  Illuminate\Foundation\Events\LocaleUpdated .......................................................................................................  
   OK Closure at: /vendor/nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php:66  
-  Illuminate\Log\Events\MessageLogged .....................  
+  Illuminate\Log\Events\MessageLogged ..............................................................................................................  
   OK Closure at: /vendor/laravel/pail/src/PailServiceProvider.php:45  
-  Illuminate\Queue\Events\JobAttempted ....................  
+  Illuminate\Queue\Events\JobAttempted .............................................................................................................  
   OK Closure at: /vendor/laravel/framework/src/Illuminate/Foundation/Providers/FoundationServiceProvider.php:217  
-  Illuminate\Queue\Events\JobExceptionOccurred ............  
+  Illuminate\Queue\Events\JobExceptionOccurred .....................................................................................................  
   OK Closure at: /vendor/laravel/pail/src/PailServiceProvider.php:52  
-  Illuminate\Queue\Events\JobProcessed ....................  
+  Illuminate\Queue\Events\JobProcessed .............................................................................................................  
   OK Closure at: /vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Renderer/Listener.php:33  
   OK Closure at: /vendor/laravel/pail/src/PailServiceProvider.php:59  
-  Illuminate\Queue\Events\JobProcessing ...................  
+  Illuminate\Queue\Events\JobProcessing ............................................................................................................  
   OK Closure at: /vendor/laravel/framework/src/Illuminate/Log/Context/ContextServiceProvider.php:53  
   OK Closure at: /vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Renderer/Listener.php:33  
   OK Closure at: /vendor/laravel/pail/src/PailServiceProvider.php:52  
@@ -1706,19 +1722,19 @@ Laravel Framework 12.48.1
 
 ```
 
-  Migration name ........................... Batch / Status  
-  0001_01_01_000000_create_users_table ............ [1] Ran  
-  0001_01_01_000001_create_cache_table ............ [1] Ran  
-  0001_01_01_000002_create_jobs_table ............. [1] Ran  
-  2026_01_23_213624_create_families_table ......... [1] Ran  
-  2026_01_23_213625_create_family_members_table ... [1] Ran  
-  2026_01_23_221245_create_taxonomy_nodes_table ... [1] Ran  
-  2026_01_23_222836_create_budget_lines_table ..... [1] Ran  
-  2026_01_23_222837_create_budget_entries_table ... [1] Ran  
-  2026_01_23_223001_create_scenarios_table ........ [1] Ran  
-  2026_01_23_224940_create_bills_table ............ [1] Ran  
-  2026_01_23_225122_create_bill_occurrences_table . [1] Ran  
-  2026_02_04_145800_create_incomes_table .......... [2] Ran  
+  Migration name .................................................................................................................... Batch / Status  
+  0001_01_01_000000_create_users_table ..................................................................................................... [1] Ran  
+  0001_01_01_000001_create_cache_table ..................................................................................................... [1] Ran  
+  0001_01_01_000002_create_jobs_table ...................................................................................................... [1] Ran  
+  2026_01_23_213624_create_families_table .................................................................................................. [1] Ran  
+  2026_01_23_213625_create_family_members_table ............................................................................................ [1] Ran  
+  2026_01_23_221245_create_taxonomy_nodes_table ............................................................................................ [1] Ran  
+  2026_01_23_222836_create_budget_lines_table .............................................................................................. [1] Ran  
+  2026_01_23_222837_create_budget_entries_table ............................................................................................ [1] Ran  
+  2026_01_23_223001_create_scenarios_table ................................................................................................. [1] Ran  
+  2026_01_23_224940_create_bills_table ..................................................................................................... [1] Ran  
+  2026_01_23_225122_create_bill_occurrences_table .......................................................................................... [1] Ran  
+  2026_02_04_145800_create_incomes_table ................................................................................................... [2] Ran  
 
 ```
 
@@ -1726,35 +1742,35 @@ Laravel Framework 12.48.1
 
 ```
 
-  SQLite ........................................... 3.39.2  
-  Connection ....................................... sqlite  
-  Database  C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\database\database.sqlite  
-  Host ....................................................  
-  Port ....................................................  
-  Username ................................................  
-  URL .....................................................  
-  Open Connections ........................................  
-  Tables ............................................... 18  
+  SQLite .................................................................................................................................... 3.39.2  
+  Connection ................................................................................................................................ sqlite  
+  Database .................................................... C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\database\database.sqlite  
+  Host .............................................................................................................................................  
+  Port .............................................................................................................................................  
+  Username .........................................................................................................................................  
+  URL ..............................................................................................................................................  
+  Open Connections .................................................................................................................................  
+  Tables ........................................................................................................................................ 18  
 
-  Schema / Table ..................................... Size  
-  main / bill_occurrences ...............................   
-  main / bills ..........................................   
-  main / budget_entries .................................   
-  main / budget_lines ...................................   
-  main / cache ..........................................   
-  main / cache_locks ....................................   
-  main / failed_jobs ....................................   
-  main / families .......................................   
-  main / family_members .................................   
-  main / incomes ........................................   
-  main / job_batches ....................................   
-  main / jobs ...........................................   
-  main / migrations .....................................   
-  main / password_reset_tokens ..........................   
-  main / scenarios ......................................   
-  main / sessions .......................................   
-  main / taxonomy_nodes .................................   
-  main / users ..........................................   
+  Schema / Table .............................................................................................................................. Size  
+  main / bill_occurrences ........................................................................................................................   
+  main / bills ...................................................................................................................................   
+  main / budget_entries ..........................................................................................................................   
+  main / budget_lines ............................................................................................................................   
+  main / cache ...................................................................................................................................   
+  main / cache_locks .............................................................................................................................   
+  main / failed_jobs .............................................................................................................................   
+  main / families ................................................................................................................................   
+  main / family_members ..........................................................................................................................   
+  main / incomes .................................................................................................................................   
+  main / job_batches .............................................................................................................................   
+  main / jobs ....................................................................................................................................   
+  main / migrations ..............................................................................................................................   
+  main / password_reset_tokens ...................................................................................................................   
+  main / scenarios ...............................................................................................................................   
+  main / sessions ................................................................................................................................   
+  main / taxonomy_nodes ..........................................................................................................................   
+  main / users ...................................................................................................................................   
 
 ```
 
@@ -1904,87 +1920,92 @@ Laravel Framework 12.48.1
 
 ### Latest routes_full output
 
-- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\routes_full_20260213_120022.txt`
+- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\routes_full_20260213_165120.txt`
 
 ```
 
-  GET|HEAD        / ....................................... 
-  GET|HEAD        confirm-password password.confirm  Auth
-  POST            confirm-password Auth\ConfirmablePasswor
-  GET|HEAD        dashboard dashboard  DashboardController
-  POST            email/verification-notification verifica
-  GET|HEAD        f/{family}/bills family.bills.index  Fa
-  POST            f/{family}/bills family.bills.store  Fa
-  GET|HEAD        f/{family}/bills/create family.bills.cre
-  PUT             f/{family}/bills/{bill} family.bills.upd
-  DELETE          f/{family}/bills/{bill} family.bills.des
-  GET|HEAD        f/{family}/bills/{bill}/edit family.bill
-  POST            f/{family}/bills/{bill}/toggle-active fa
-  GET|HEAD        f/{family}/dashboard family.dashboard  
-  GET|HEAD        f/{family}/incomes incomes.index  Famil
-  POST            f/{family}/incomes incomes.store  Famil
-  PUT|PATCH       f/{family}/incomes/{income} incomes.upda
-  DELETE          f/{family}/incomes/{income} incomes.dest
-  GET|HEAD        f/{family}/members family.members.index 
-  POST            f/{family}/members family.members.store 
-  PUT             f/{family}/members/{member} family.membe
-  DELETE          f/{family}/members/{member} family.membe
-  GET|HEAD        f/{family}/ping ......................... 
-  GET|HEAD        f/{family}/planpag family.planpag  Fami
-  POST            f/{family}/planpag/{occurrence}/mark-paid family.planpag.markPaid  FamilyPlanpagActionsController@markPa
-  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmark
-  GET|HEAD        f/{family}/taxonomia family.taxonomy  T
-  POST            families families.store  FamilyControll
-  POST            families/{family}/activate families.acti
-  GET|HEAD        forgot-password password.request  Auth\
-  POST            forgot-password password.email  Auth\Pa
-  GET|HEAD        login login  Auth\AuthenticatedSessionC
-  POST            login Auth\AuthenticatedSessionControlle
-  POST            logout logout  Auth\AuthenticatedSessio
-  PUT             password password.update  Auth\Password
-  GET|HEAD        planpag ......... PlanpagController@index
-  GET|HEAD        profile profile.edit  ProfileController
-  PATCH           profile profile.update  ProfileControll
-  DELETE          profile profile.destroy  ProfileControl
-  GET|HEAD        register register  Auth\RegisteredUserC
-  POST            register Auth\RegisteredUserController@s
-  POST            reset-password password.store  Auth\New
-  GET|HEAD        reset-password/{token} password.reset  
-  GET|HEAD        storage/{path} ............ storage.local
-  GET|HEAD        taxonomia ...... TaxonomyController@index
-  GET|HEAD        up ...................................... 
-  GET|HEAD        verify-email verification.notice  Auth\
-  GET|HEAD        verify-email/{id}/{hash} verification.ve
+  GET|HEAD        / ...................................................................................................................................... 
+  GET|HEAD        confirm-password ............................................................ password.confirm  Auth\ConfirmablePasswordController@show
+  POST            confirm-password .............................................................................. Auth\ConfirmablePasswordController@store
+  GET|HEAD        dashboard .............................................................................................. dashboard  DashboardController
+  POST            email/verification-notification ................................. verification.send  Auth\EmailVerificationNotificationController@store
+  GET|HEAD        f/{family}/bills ...................................................................... family.bills.index  FamilyBillsController@index
+  POST            f/{family}/bills ...................................................................... family.bills.store  FamilyBillsController@store
+  GET|HEAD        f/{family}/bills/create ............................................................. family.bills.create  FamilyBillsController@create
+  PUT             f/{family}/bills/{bill} ............................................................. family.bills.update  FamilyBillsController@update
+  DELETE          f/{family}/bills/{bill} ........................................................... family.bills.destroy  FamilyBillsController@destroy
+  GET|HEAD        f/{family}/bills/{bill}/edit ............................................................ family.bills.edit  FamilyBillsController@edit
+  POST            f/{family}/bills/{bill}/toggle-active ................................... family.bills.toggleActive  FamilyBillsController@toggleActive
+  GET|HEAD        f/{family}/dashboard ................................................................ family.dashboard  FamilyDashboardController@index
+  GET|HEAD        f/{family}/incomes ....................................................................... incomes.index  FamilyIncomesController@index
+  POST            f/{family}/incomes ....................................................................... incomes.store  FamilyIncomesController@store
+  PUT|PATCH       f/{family}/incomes/{income} ............................................................ incomes.update  FamilyIncomesController@update
+  DELETE          f/{family}/incomes/{income} .......................................................... incomes.destroy  FamilyIncomesController@destroy
+  GET|HEAD        f/{family}/members ................................................................ family.members.index  FamilyMembersController@index
+  POST            f/{family}/members ................................................................ family.members.store  FamilyMembersController@store
+  PUT             f/{family}/members/{member} ..................................................... family.members.update  FamilyMembersController@update
+  DELETE          f/{family}/members/{member} ................................................... family.members.destroy  FamilyMembersController@destroy
+  GET|HEAD        f/{family}/ping ........................................................................................................................ 
+  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag  FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        f/{family}/taxonomia ........................................................................ family.taxonomy  TaxonomyController@index
+  POST            families ....................................................................................... families.store  FamilyController@store
+  POST            families/{family}/activate ............................................................... families.activate  FamilyController@activate
+  GET|HEAD        forgot-password ............................................................. password.request  Auth\PasswordResetLinkController@create
+  POST            forgot-password ................................................................ password.email  Auth\PasswordResetLinkController@store
+  GET|HEAD        login ............................................................................... login  Auth\AuthenticatedSessionController@create
+  POST            login ........................................................................................ Auth\AuthenticatedSessionController@store
+  POST            logout ............................................................................ logout  Auth\AuthenticatedSessionController@destroy
+  PUT             password .............................................................................. password.update  Auth\PasswordController@update
+  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
+  GET|HEAD        profile .......................................................................................... profile.edit  ProfileController@edit
+  PATCH           profile ...................................................................................... profile.update  ProfileController@update
+  DELETE          profile .................................................................................... profile.destroy  ProfileController@destroy
+  GET|HEAD        register ............................................................................... register  Auth\RegisteredUserController@create
+  POST            register ........................................................................................... Auth\RegisteredUserController@store
+  POST            reset-password ....................................................................... password.store  Auth\NewPasswordController@store
+  GET|HEAD        reset-password/{token} .............................................................. password.reset  Auth\NewPasswordController@create
+  GET|HEAD        storage/{path} ........................................................................................................... storage.local
+  GET|HEAD        taxonomia ..................................................................................................... TaxonomyController@index
+  GET|HEAD        up ..................................................................................................................................... 
+  GET|HEAD        verify-email .............................................................. verification.notice  Auth\EmailVerificationPromptController
+  GET|HEAD        verify-email/{id}/{hash} .............................................................. verification.verify  Auth\VerifyEmailController
 
-                                        Showing [47] routes
+                                                                                                                                       Showing [47] routes
 
 ```
 
 ### Latest timestamp snapshot (short)
 
-- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\snapshot_20260213_120022.md`
+- Latest file: `C:\Users\nitro\OneDrive\Documentos\Familyfin novo\familyfin\docs\snapshots\snapshot_20260213_165119.md`
 
 ```
 # FamilyFin Snapshot
 
-- Generated at: `2026-02-13T12:00:22.1895340-03:00`
+- Generated at: `2026-02-13T16:51:20.0672920-03:00`
 - Repo root: `C:/Users/nitro/OneDrive/Documentos/Familyfin novo/familyfin`
 
 ## Git
 
-- Branch: `chore/snapshot-update`
-- HEAD: `0f6123b`
+- Branch: `feat/rbac-family-members-policy`
+- HEAD: `6659fe2`
 - Upstream: `none`
 
 ### Status
 
 ```
-## chore/snapshot-update
+## feat/rbac-family-members-policy
+ M docs/snapshots/SNAPSHOT_FULL.md
+ M docs/snapshots/SNAPSHOT_LATEST.md
 ```
 
 ### Last 15 commits
 
 ```
+6659fe2 RBAC: add FamilyMemberPolicy and authorize family members
+2303869 RBAC: add family role helpers and authorize incomes via policies (#42)
+47bf31e Update snapshots (LATEST + FULL) (#41)
 0f6123b Add family members management (roles + UI) (#40)
 554038a Update snapshots (LATEST + FULL) (#39)
 03b617a Fix incomes tenancy: scopeBindings + harden IncomeFlowTest (#38)
@@ -1997,15 +2018,14 @@ c11536f Update snapshots (#32)
 a537808 Add incomes feature (tenancy scoped) + IncomeFlowTest (#30)
 a981ae8 chore(docs): harden full snapshot script (ascii + robust config:show) (#29)
 4e52acd chore(docs): add snapshot system (latest + full) (#28)
-dea1acc chore(git): protect main with local hooks (#27)
-ae54ec1 feat(planpag): allow custom paid amount on mark paid (#26)
-588c073 test(planpag): cover unmark paid flow (#25)
 ```
 
 ### Diff stat (working tree)
 
 ```
-(no output)
+ docs/snapshots/SNAPSHOT_FULL.md   | 1408 +++++++++++++++++++------------------
+ docs/snapshots/SNAPSHOT_LATEST.md |   26 +-
+ 2 files changed, 724 insertions(+), 710 deletions(-)
 ```
 
 ## Local main protection (githooks)
@@ -2103,15 +2123,15 @@ MAIL_MAILER=***REDACTED***
 ### PlanPag routes (filtered from route:list)
 
 ```
-  GET|HEAD        f/{family}/planpag family.planpag  Fami
-  POST            f/{family}/planpag/{occurrence}/mark-paid family.planpag.markPaid  FamilyPlanpagActionsController@markPa
-  POST            f/{family}/planpag/{occurrence}/unmark-paid family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmark
-  GET|HEAD        planpag ......... PlanpagController@index
+  GET|HEAD        f/{family}/planpag ........................................................................ family.planpag  FamilyPlanpagPageController
+  POST            f/{family}/planpag/{occurrence}/mark-paid ............................ family.planpag.markPaid  FamilyPlanpagActionsController@markPaid
+  POST            f/{family}/planpag/{occurrence}/unmark-paid ...................... family.planpag.unmarkPaid  FamilyPlanpagActionsController@unmarkPaid
+  GET|HEAD        planpag ........................................................................................................ PlanpagController@index
 ```
 
 ### Full route:list
 
-- Saved to: `docs\snapshots\routes_full_20260213_120022.txt`
+- Saved to: `docs\snapshots\routes_full_20260213_165120.txt`
 
 ## Notes
 
