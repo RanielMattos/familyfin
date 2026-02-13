@@ -1,17 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+
 use App\Http\Controllers\FamilyController;
 use App\Http\Controllers\FamilyDashboardController;
+
 use App\Http\Controllers\FamilyPlanpagPageController;
 use App\Http\Controllers\FamilyPlanpagActionsController;
-use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\PlanpagController;
+
+use App\Http\Controllers\TaxonomyController;
+
 use App\Http\Controllers\FamilyBillsController;
 use App\Http\Controllers\FamilyIncomesController;
 use App\Http\Controllers\FamilyMembersController;
+
+use App\Http\Controllers\FamilyScenariosController;
+use App\Http\Controllers\FamilyBudgetLinesController;
+use App\Http\Controllers\FamilyBudgetEntriesController;
 
 use App\Http\Middleware\EnsureFamilyAccess;
 use App\Http\Middleware\AutoActivateFamily;
@@ -84,25 +93,42 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/f/{family}')
         ->middleware([EnsureFamilyAccess::class, AutoActivateFamily::class])
         ->group(function () {
+
             Route::get('/dashboard', [FamilyDashboardController::class, 'index'])
                 ->name('family.dashboard');
 
-            // PlanPag UI
+            /*
+            |--------------------------------------------------------------------------
+            | PlanPag UI
+            |--------------------------------------------------------------------------
+            */
             Route::get('/planpag', FamilyPlanpagPageController::class)
                 ->name('family.planpag');
 
-            // PlanPag actions
+            /*
+            |--------------------------------------------------------------------------
+            | PlanPag actions
+            |--------------------------------------------------------------------------
+            */
             Route::post('/planpag/{occurrence}/mark-paid', [FamilyPlanpagActionsController::class, 'markPaid'])
                 ->name('family.planpag.markPaid');
 
             Route::post('/planpag/{occurrence}/unmark-paid', [FamilyPlanpagActionsController::class, 'unmarkPaid'])
                 ->name('family.planpag.unmarkPaid');
 
-            // Taxonomy JSON
+            /*
+            |--------------------------------------------------------------------------
+            | Taxonomy JSON
+            |--------------------------------------------------------------------------
+            */
             Route::get('/taxonomia', [TaxonomyController::class, 'index'])
                 ->name('family.taxonomy');
 
-            // Bills
+            /*
+            |--------------------------------------------------------------------------
+            | Bills
+            |--------------------------------------------------------------------------
+            */
             Route::get('/bills', [FamilyBillsController::class, 'index'])->name('family.bills.index');
             Route::get('/bills/create', [FamilyBillsController::class, 'create'])->name('family.bills.create');
             Route::post('/bills', [FamilyBillsController::class, 'store'])->name('family.bills.store');
@@ -111,22 +137,88 @@ Route::middleware('auth')->group(function () {
             Route::delete('/bills/{bill}', [FamilyBillsController::class, 'destroy'])->name('family.bills.destroy');
             Route::post('/bills/{bill}/toggle-active', [FamilyBillsController::class, 'toggleActive'])->name('family.bills.toggleActive');
 
-              // ✅ Members + Incomes (scoped bindings)
-              Route::scopeBindings()->group(function () {
-                  Route::get('/members', [FamilyMembersController::class, 'index'])
-                      ->name('family.members.index');
-                  Route::post('/members', [FamilyMembersController::class, 'store'])
-                      ->name('family.members.store');
-                  Route::put('/members/{member}', [FamilyMembersController::class, 'update'])
-                      ->name('family.members.update');
-                  Route::delete('/members/{member}', [FamilyMembersController::class, 'destroy'])
-                      ->name('family.members.destroy');
+            /*
+            |--------------------------------------------------------------------------
+            | ✅ Scoped bindings (protege {member}/{income}/{scenario}/{line}/{entry})
+            |--------------------------------------------------------------------------
+            */
+            Route::scopeBindings()->group(function () {
 
-                  Route::resource('incomes', FamilyIncomesController::class)
-                      ->except(['show', 'edit', 'create']);
-              });
+                /*
+                |--------------------------------------------------------------------------
+                | Members
+                |--------------------------------------------------------------------------
+                */
+                Route::get('/members', [FamilyMembersController::class, 'index'])
+                    ->name('family.members.index');
 
+                Route::post('/members', [FamilyMembersController::class, 'store'])
+                    ->name('family.members.store');
+
+                Route::put('/members/{member}', [FamilyMembersController::class, 'update'])
+                    ->name('family.members.update');
+
+                Route::delete('/members/{member}', [FamilyMembersController::class, 'destroy'])
+                    ->name('family.members.destroy');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Incomes (resource)
+                |--------------------------------------------------------------------------
+                */
+                Route::resource('incomes', FamilyIncomesController::class)
+                    ->except(['show', 'edit', 'create']);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Scenarios
+                |--------------------------------------------------------------------------
+                */
+                Route::get('/scenarios', [FamilyScenariosController::class, 'index'])
+                    ->name('family.scenarios.index');
+
+                Route::post('/scenarios', [FamilyScenariosController::class, 'store'])
+                    ->name('family.scenarios.store');
+
+                Route::put('/scenarios/{scenario}', [FamilyScenariosController::class, 'update'])
+                    ->name('family.scenarios.update');
+
+                Route::delete('/scenarios/{scenario}', [FamilyScenariosController::class, 'destroy'])
+                    ->name('family.scenarios.destroy');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Budget Lines (dentro do scenario)
+                |--------------------------------------------------------------------------
+                */
+                Route::get('/scenarios/{scenario}/budget-lines', [FamilyBudgetLinesController::class, 'index'])
+                    ->name('family.budget.lines.index');
+
+                Route::post('/scenarios/{scenario}/budget-lines', [FamilyBudgetLinesController::class, 'store'])
+                    ->name('family.budget.lines.store');
+
+                Route::put('/scenarios/{scenario}/budget-lines/{line}', [FamilyBudgetLinesController::class, 'update'])
+                    ->name('family.budget.lines.update');
+
+                Route::delete('/scenarios/{scenario}/budget-lines/{line}', [FamilyBudgetLinesController::class, 'destroy'])
+                    ->name('family.budget.lines.destroy');
+
+                Route::post('/scenarios/{scenario}/budget-lines/{line}/toggle-active', [FamilyBudgetLinesController::class, 'toggleActive'])
+                    ->name('family.budget.lines.toggleActive');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Budget Entries (dentro da line)
+                |--------------------------------------------------------------------------
+                */
+                Route::post('/scenarios/{scenario}/budget-lines/{line}/entries', [FamilyBudgetEntriesController::class, 'store'])
+                    ->name('family.budget.entries.store');
+
+                Route::delete('/scenarios/{scenario}/budget-lines/{line}/entries/{entry}', [FamilyBudgetEntriesController::class, 'destroy'])
+                    ->name('family.budget.entries.destroy');
+            });
         });
+
 });
 
 /*
