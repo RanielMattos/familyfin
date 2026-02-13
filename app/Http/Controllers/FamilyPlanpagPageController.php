@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BillOccurrence;
 use App\Models\Family;
 use App\Services\PlanpagService;
 use Illuminate\Http\Request;
@@ -15,6 +16,8 @@ class FamilyPlanpagPageController extends Controller
 
     public function __invoke(Request $request, Family $family): View
     {
+        $this->authorize('viewAny', [BillOccurrence::class, $family]);
+
         $validated = $request->validate([
             'from' => ['required', 'date'],
             'to'   => ['required', 'date', 'after_or_equal:from'],
